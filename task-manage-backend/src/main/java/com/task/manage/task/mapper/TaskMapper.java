@@ -1,0 +1,49 @@
+package com.task.manage.task.mapper;
+
+import com.task.manage.partner.domain.Partner;
+import com.task.manage.partner.mapper.PartnerMapper;
+import com.task.manage.task.domain.Task;
+import com.task.manage.task.dto.TaskRequestDto;
+import com.task.manage.task.dto.TaskResponseDto;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+
+@Mapper(
+        componentModel = "spring",
+        uses = {PartnerMapper.class},
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+)
+public interface TaskMapper {
+
+    @Mapping(target = "assignedPartner", source = "assignedPartner")
+    TaskResponseDto toResponseDto(Task task);
+
+    @Mapping(target = "assignedPartner", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "dateCreated", ignore = true)
+    @Mapping(target = "lastModified", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
+    @Mapping(target = "dataStatus", ignore = true)
+    Task toEntity(TaskRequestDto requestDto);
+
+    @Mapping(target = "assignedPartner", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "dateCreated", ignore = true)
+    @Mapping(target = "lastModified", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
+    @Mapping(target = "dataStatus", ignore = true)
+    void updateEntityFromDto(TaskRequestDto requestDto, @MappingTarget Task task);
+
+    default Partner mapPartnerFromId(Long partnerId) {
+        if (partnerId == null) {
+            return null;
+        }
+        Partner partner = new Partner();
+        partner.setId(partnerId);
+        return partner;
+    }
+}

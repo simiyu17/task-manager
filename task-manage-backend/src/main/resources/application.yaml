@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: task-manage-backend
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:5433}/${POSTGRESQL_DATABASE:task_manager_db}
+    username: ${POSTGRESQL_USER:root}
+    password: ${POSTGRESQL_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 10
+      connection-test-query: SELECT 1
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 60000
+      leak-detection-threshold: 60000
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: true
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
+        #generate_statistics: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # The URL Keycloak realm
+          issuer-uri: http://localhost:8080/realms/production
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+server:
+  port: 8082
+  servlet:
+    context-path: /task-manager

@@ -1,0 +1,87 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-task-table
+      author: admin
+      changes:
+        - createSequence:
+            sequenceName: tasks_seq
+            startValue: 1
+            incrementBy: 50
+
+        - createTable:
+            tableName: tasks
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: task_provider_name
+                  type: VARCHAR(255)
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: assigned_partner_id
+                  type: BIGINT
+              - column:
+                  name: task_status
+                  type: VARCHAR(50)
+              - column:
+                  name: validated_budget
+                  type: DECIMAL(19,2)
+              - column:
+                  name: request_received_at
+                  type: TIMESTAMP
+              - column:
+                  name: accepted_at
+                  type: TIMESTAMP
+              - column:
+                  name: deadline
+                  type: TIMESTAMP
+              - column:
+                  name: date_created
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: last_modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: data_status
+                  type: VARCHAR(50)
+
+        - addForeignKeyConstraint:
+            baseTableName: tasks
+            baseColumnNames: assigned_partner_id
+            constraintName: fk_tasks_partner
+            referencedTableName: partners
+            referencedColumnNames: id
+            onDelete: SET NULL
+            onUpdate: CASCADE
+
+        - addUniqueConstraint:
+            tableName: tasks
+            columnNames: title
+            constraintName: TITLE_UNIQUE
+
+      rollback:
+        - dropTable:
+            tableName: tasks
+        - dropSequence:
+            sequenceName: tasks_seq
+
