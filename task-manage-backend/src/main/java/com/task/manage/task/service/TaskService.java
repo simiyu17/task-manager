@@ -24,4 +24,6 @@ public interface TaskService {
     TaskResponseDto assignPartnerToTask(Long taskId, Long partnerId);
 
     TaskResponseDto updateTaskStatus(Long taskId, String status);
+
+    TaskResponseDto moveTaskToNextStatus(Long taskId);
 }

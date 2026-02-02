@@ -3,6 +3,7 @@ package com.task.manage.task.mapper;
 import com.task.manage.partner.domain.Partner;
 import com.task.manage.partner.mapper.PartnerMapper;
 import com.task.manage.task.domain.Task;
+import com.task.manage.task.domain.Task.TaskStatus;
 import com.task.manage.task.dto.TaskRequestDto;
 import com.task.manage.task.dto.TaskResponseDto;
 import org.mapstruct.Mapper;
@@ -18,6 +19,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public interface TaskMapper {
 
     @Mapping(target = "assignedPartner", source = "assignedPartner")
+    @Mapping(target = "taskStatus", expression = "java(taskStatusToString(task.getTaskStatus()))")
     TaskResponseDto toResponseDto(Task task);
 
     @Mapping(target = "assignedPartner", ignore = true)
@@ -27,6 +29,7 @@ public interface TaskMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "dataStatus", ignore = true)
+    @Mapping(target = "taskStatus", expression = "java(stringToTaskStatus(requestDto.taskStatus()))")
     Task toEntity(TaskRequestDto requestDto);
 
     @Mapping(target = "assignedPartner", ignore = true)
@@ -36,6 +39,7 @@ public interface TaskMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "dataStatus", ignore = true)
+    @Mapping(target = "taskStatus", expression = "java(stringToTaskStatus(requestDto.taskStatus()))")
     void updateEntityFromDto(TaskRequestDto requestDto, @MappingTarget Task task);
 
     default Partner mapPartnerFromId(Long partnerId) {
@@ -45,5 +49,13 @@ public interface TaskMapper {
         Partner partner = new Partner();
         partner.setId(partnerId);
         return partner;
+    }
+
+    default String taskStatusToString(TaskStatus taskStatus) {
+        return taskStatus != null ? taskStatus.name() : null;
+    }
+
+    default TaskStatus stringToTaskStatus(String taskStatus) {
+        return TaskStatus.fromString(taskStatus);
     }
 }

@@ -36,7 +36,8 @@ public class PartnerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PartnerResponseDto> getPartnerById(@PathVariable Long id) {
+    public ResponseEntity<PartnerResponseDto> getPartnerById(
+            @PathVariable Long id) {
         PartnerResponseDto response = partnerService.getPartnerById(id);
         return ResponseEntity.ok(response);
     }
@@ -55,7 +56,8 @@ public class PartnerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePartner(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePartner(
+            @PathVariable Long id) {
         partnerService.deletePartner(id);
         return ResponseEntity.noContent().build();
     }

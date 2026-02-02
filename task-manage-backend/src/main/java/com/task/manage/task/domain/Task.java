@@ -1,5 +1,6 @@
 package com.task.manage.task.domain;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.task.manage.partner.domain.Partner;
 import com.task.manage.shared.domain.BaseEntity;
 import jakarta.persistence.Column;
@@ -85,12 +86,31 @@ public class Task extends BaseEntity {
         CN_DRAFTING, CN_UNDER_REVIEW, CN_APPROVED,
         INCEPTION_REPORT_PENDING, EXECUTION, COMPLETED;
 
-        private final String displayName;
+        @JsonValue
+        public String getName() {
+            return this.name();
+        }
 
-        TaskStatus() {
-            this.displayName = this.name().charAt(0) + this.name().substring(1).toLowerCase().replace('_', ' ');
+        public String getDisplayName() {
+            return this.name().charAt(0) + this.name().substring(1).toLowerCase().replace('_', ' ');
+        }
+
+        /**
+         * Get TaskStatus from string value (case-insensitive)
+         * @param value the string value
+         * @return TaskStatus or null if not found
+         */
+        public static TaskStatus fromString(String value) {
+            if (value == null) {
+                return null;
+            }
+            for (TaskStatus status : TaskStatus.values()) {
+                if (status.name().equalsIgnoreCase(value)) {
+                    return status;
+                }
+            }
+            return null;
         }
     }
-
 
 }

@@ -1,6 +1,5 @@
 package com.task.manage.task.dto;
 
-import com.task.manage.task.domain.Task.TaskStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -18,7 +17,7 @@ public record TaskRequestDto(
         Long assignedPartnerId,
 
         @NotNull(message = "Task status is required")
-        TaskStatus taskStatus,
+        String taskStatus,
 
         BigDecimal validatedBudget,
 

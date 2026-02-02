@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -108,7 +107,7 @@ public class TaskServiceImpl implements TaskService {
 
         return tasks.stream()
                 .map(taskMapper::toResponseDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -164,18 +163,54 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new TaskNotFoundException(taskId));
 
-        // Update status
-        try {
-            TaskStatus taskStatus = TaskStatus.valueOf(status.toUpperCase());
-            task.setTaskStatus(taskStatus);
-        } catch (IllegalArgumentException e) {
+        // Update status using fromString method (case-insensitive)
+        TaskStatus taskStatus = TaskStatus.fromString(status);
+        if (taskStatus == null) {
             throw new IllegalArgumentException("Invalid task status: " + status);
         }
+        task.setTaskStatus(taskStatus);
 
         // Save task
         Task updatedTask = taskRepository.save(task);
         log.info("Task status updated successfully");
 
         return taskMapper.toResponseDto(updatedTask);
+    }
+
+    @Override
+    public TaskResponseDto moveTaskToNextStatus(Long taskId) {
+        log.info("Moving task {} to next status", taskId);
+
+        // Find task
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException(taskId));
+
+        TaskStatus currentStatus = task.getTaskStatus();
+        TaskStatus nextStatus = getNextStatus(currentStatus);
+
+        if (nextStatus == null) {
+            throw new IllegalStateException("Task is already in final status: " + currentStatus);
+        }
+
+        task.setTaskStatus(nextStatus);
+        Task updatedTask = taskRepository.save(task);
+        log.info("Task moved from {} to {}", currentStatus, nextStatus);
+
+        return taskMapper.toResponseDto(updatedTask);
+    }
+
+    private TaskStatus getNextStatus(TaskStatus currentStatus) {
+        return switch (currentStatus) {
+            case INITIATED -> TaskStatus.ALLOCATED;
+            case ALLOCATED -> TaskStatus.ACCEPTED;
+            case ACCEPTED -> TaskStatus.WBS_SUBMITTED;
+            case WBS_SUBMITTED -> TaskStatus.CN_DRAFTING;
+            case CN_DRAFTING -> TaskStatus.CN_UNDER_REVIEW;
+            case CN_UNDER_REVIEW -> TaskStatus.CN_APPROVED;
+            case CN_APPROVED -> TaskStatus.INCEPTION_REPORT_PENDING;
+            case INCEPTION_REPORT_PENDING -> TaskStatus.EXECUTION;
+            case EXECUTION -> TaskStatus.COMPLETED;
+            case COMPLETED -> null; // Final status
+        };
     }
 }

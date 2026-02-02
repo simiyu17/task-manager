@@ -40,7 +40,29 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
+logging:
+  level:
+    com.task.manage.config.KeycloakAuditorAware: DEBUG
+    com.task.manage.partner.service: DEBUG
+    org.springframework.security: INFO
+
 server:
   port: 8082
   servlet:
     context-path: /task-manager
+
+file:
+  upload-dir: ${FILE_UPLOAD_DIR:./uploads}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operationsSorter: method
+    tagsSorter: alpha
+    tryItOutEnabled: true
+  show-actuator: false
+

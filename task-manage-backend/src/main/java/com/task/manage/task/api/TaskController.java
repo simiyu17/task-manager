@@ -36,7 +36,8 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskResponseDto> getTaskById(@PathVariable Long id) {
+    public ResponseEntity<TaskResponseDto> getTaskById(
+            @PathVariable Long id) {
         TaskResponseDto response = taskService.getTaskById(id);
         return ResponseEntity.ok(response);
     }
@@ -55,7 +56,8 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTask(
+            @PathVariable Long id) {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
     }
@@ -73,6 +75,13 @@ public class TaskController {
             @PathVariable Long taskId,
             @RequestParam String status) {
         TaskResponseDto response = taskService.updateTaskStatus(taskId, status);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{taskId}/next-status")
+    public ResponseEntity<TaskResponseDto> moveTaskToNextStatus(
+            @PathVariable Long taskId) {
+        TaskResponseDto response = taskService.moveTaskToNextStatus(taskId);
         return ResponseEntity.ok(response);
     }
 }

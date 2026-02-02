@@ -3,4 +3,11 @@ databaseChangeLog:
         file: db/changelog/changes/001-add-partners-table.yaml
   - include:
         file: db/changelog/changes/002-add-task-table.yaml
-
+  - include:
+      file: db/changelog/changes/003-add-document-table.yaml
+  - include:
+      file: db/changelog/changes/004-add-task-reviews-table.yaml
+  - include:
+      file: db/changelog/changes/005-add-review-comments-table.yaml
+  - include:
+      file: db/changelog/changes/006-add-clarifying-questions-table.yaml

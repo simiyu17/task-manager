@@ -1,7 +1,6 @@
 package com.task.manage.task.dto;
 
 import com.task.manage.partner.dto.PartnerResponseDto;
-import com.task.manage.task.domain.Task.TaskStatus;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -13,7 +12,7 @@ public record TaskResponseDto(
         String taskProviderName,
         String description,
         PartnerResponseDto assignedPartner,
-        TaskStatus taskStatus,
+        String taskStatus,
         BigDecimal validatedBudget,
         LocalDateTime requestReceivedAt,
         LocalDateTime acceptedAt,

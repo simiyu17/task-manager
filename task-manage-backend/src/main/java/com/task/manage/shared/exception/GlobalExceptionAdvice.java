@@ -1,6 +1,12 @@
 package com.task.manage.shared.exception;
 
+import com.task.manage.document.exception.DocumentNotFoundException;
+import com.task.manage.document.exception.FileNotFoundException;
+import com.task.manage.document.exception.FileStorageException;
+import com.task.manage.document.exception.InvalidFileException;
 import com.task.manage.partner.exception.PartnerNotFoundException;
+import com.task.manage.task.exception.QuestionNotFoundException;
+import com.task.manage.task.exception.ReviewNotFoundException;
 import com.task.manage.task.exception.TaskAlreadyExistsException;
 import com.task.manage.task.exception.TaskNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -43,6 +49,60 @@ public class GlobalExceptionAdvice {
     public ProblemDetail handlePartnerNotFoundException(PartnerNotFoundException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problemDetail.setTitle("Partner Not Found");
+        problemDetail.setProperty(TIME_STAMP, Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(DocumentNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ProblemDetail handleDocumentNotFoundException(DocumentNotFoundException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problemDetail.setTitle("Document Not Found");
+        problemDetail.setProperty(TIME_STAMP, Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(ReviewNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ProblemDetail handleReviewNotFoundException(ReviewNotFoundException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problemDetail.setTitle("Review Not Found");
+        problemDetail.setProperty(TIME_STAMP, Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(QuestionNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ProblemDetail handleQuestionNotFoundException(QuestionNotFoundException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problemDetail.setTitle("Question Not Found");
+        problemDetail.setProperty(TIME_STAMP, Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ProblemDetail handleFileNotFoundException(FileNotFoundException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problemDetail.setTitle("File Not Found");
+        problemDetail.setProperty(TIME_STAMP, Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(FileStorageException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ProblemDetail handleFileStorageException(FileStorageException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        problemDetail.setTitle("File Storage Error");
+        problemDetail.setProperty(TIME_STAMP, Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(InvalidFileException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ProblemDetail handleInvalidFileException(InvalidFileException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problemDetail.setTitle("Invalid File");
         problemDetail.setProperty(TIME_STAMP, Instant.now());
         return problemDetail;
     }

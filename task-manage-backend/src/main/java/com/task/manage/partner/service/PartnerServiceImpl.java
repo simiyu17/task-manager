@@ -1,5 +1,6 @@
 package com.task.manage.partner.service;
 
+import com.task.manage.config.JwtTokenInspector;
 import com.task.manage.partner.domain.Partner;
 import com.task.manage.partner.domain.PartnerRepository;
 import com.task.manage.partner.dto.PartnerRequestDto;
@@ -24,15 +25,27 @@ public class PartnerServiceImpl implements PartnerService {
 
     private final PartnerRepository partnerRepository;
     private final PartnerMapper partnerMapper;
+    private final JwtTokenInspector jwtTokenInspector;
 
     @Override
     public PartnerResponseDto createPartner(PartnerRequestDto requestDto) {
         log.info("Creating partner with name: {}", requestDto.partnerName());
 
+        // Log JWT token claims to help debug
+        log.debug("=== Inspecting JWT Token for Auditing ===");
+        jwtTokenInspector.logAllTokenClaims();
+        log.debug("Username that will be used for auditing: {}", jwtTokenInspector.getCurrentUsername());
+
         Partner partner = partnerMapper.toEntity(requestDto);
+        log.debug("Partner before save - createdBy: {}, lastModifiedBy: {}",
+                partner.getCreatedBy(), partner.getLastModifiedBy());
+
         Partner savedPartner = partnerRepository.save(partner);
 
         log.info("Partner created successfully with id: {}", savedPartner.getId());
+        log.debug("Partner after save - createdBy: {}, lastModifiedBy: {}",
+                savedPartner.getCreatedBy(), savedPartner.getLastModifiedBy());
+
         return partnerMapper.toResponseDto(savedPartner);
     }
 

@@ -1,5 +1,6 @@
 package com.task.manage.document.domain;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.task.manage.shared.domain.BaseEntity;
 import com.task.manage.task.domain.Task;
 import jakarta.persistence.Column;
@@ -11,13 +12,21 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(
         name = "documents",
@@ -77,24 +86,64 @@ public class Document extends BaseEntity {
     }
 
     @Getter
-    enum DocumentType {
+    public enum DocumentType {
         WBS, CONCEPT_NOTE, INCEPTION_REPORT, DRAFT_REPORT, FINAL_REPORT;
 
-        private final String displayName;
+        @JsonValue
+        public String getName() {
+            return this.name();
+        }
 
-        DocumentType() {
-            this.displayName = this.name().charAt(0) + this.name().substring(1).toLowerCase().replace('_', ' ');
+        public String getDisplayName() {
+            return this.name().charAt(0) + this.name().substring(1).toLowerCase().replace('_', ' ');
+        }
+
+        /**
+         * Get DocumentType from string value (case-insensitive)
+         * @param value the string value
+         * @return DocumentType or null if not found
+         */
+        public static DocumentType fromString(String value) {
+            if (value == null) {
+                return null;
+            }
+            for (DocumentType type : DocumentType.values()) {
+                if (type.name().equalsIgnoreCase(value)) {
+                    return type;
+                }
+            }
+            return null;
         }
     }
 
     @Getter
-    enum FileLocation {
+    public enum FileLocation {
         LOCAL_DISK, AWS_S3, AZURE_BLOB, GOOGLE_GCP;
 
-        private final String displayName;
+        @JsonValue
+        public String getName() {
+            return this.name();
+        }
 
-        FileLocation() {
-            this.displayName = this.name().charAt(0) + this.name().substring(1).toLowerCase().replace('_', ' ');
+        public String getDisplayName() {
+            return this.name().charAt(0) + this.name().substring(1).toLowerCase().replace('_', ' ');
+        }
+
+        /**
+         * Get FileLocation from string value (case-insensitive)
+         * @param value the string value
+         * @return FileLocation or null if not found
+         */
+        public static FileLocation fromString(String value) {
+            if (value == null) {
+                return null;
+            }
+            for (FileLocation location : FileLocation.values()) {
+                if (location.name().equalsIgnoreCase(value)) {
+                    return location;
+                }
+            }
+            return null;
         }
     }
 }
