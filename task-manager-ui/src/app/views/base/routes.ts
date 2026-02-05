@@ -20,6 +20,34 @@ export const routes: Routes = [
         }
       },
       {
+        path: 'tasks/initiate-task',
+        loadComponent: () => import('./tasks/tasks-stepper/tasks-stepper.component').then(m => m.TasksStepperComponent),
+        data: {
+          title: 'Initiate Task'
+        }
+      },
+      {
+        path: 'tasks/:id/view',
+        loadComponent: () => import('./tasks/view-task/view-task.component').then(m => m.ViewTaskComponent),
+        data: {
+          title: 'View Task'
+        }
+      },
+      {
+        path: 'tasks/:id/edit',
+        loadComponent: () => import('./tasks/edit-task/edit-task.component').then(m => m.EditTaskComponent),
+        data: {
+          title: 'Edit Task'
+        }
+      },
+      {
+        path: 'tasks/:id/update-progress',
+        loadComponent: () => import('./tasks/update-task-progress/update-task-progress.component').then(m => m.UpdateTaskProgressComponent),
+        data: {
+          title: 'Update Task Progress'
+        }
+      },
+      {
         path: 'accordion',
         loadComponent: () => import('./accordion/accordions.component').then(m => m.AccordionsComponent),
         data: {

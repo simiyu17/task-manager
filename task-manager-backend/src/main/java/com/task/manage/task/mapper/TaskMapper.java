@@ -29,7 +29,8 @@ public interface TaskMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "dataStatus", ignore = true)
-    @Mapping(target = "taskStatus", expression = "java(stringToTaskStatus(requestDto.taskStatus()))")
+    @Mapping(target = "taskStatus", expression = "java(stringToTaskStatus(\"INITIATED\"))")
+    @Mapping(target = "requestReceivedAt", expression = "java(java.time.LocalDateTime.now())")
     Task toEntity(TaskRequestDto requestDto);
 
     @Mapping(target = "assignedPartner", ignore = true)
@@ -39,7 +40,7 @@ public interface TaskMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "dataStatus", ignore = true)
-    @Mapping(target = "taskStatus", expression = "java(stringToTaskStatus(requestDto.taskStatus()))")
+    @Mapping(target = "taskStatus", ignore = true)
     void updateEntityFromDto(TaskRequestDto requestDto, @MappingTarget Task task);
 
     default Partner mapPartnerFromId(Long partnerId) {

@@ -43,7 +43,7 @@ public class Task extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "task_status")
-    private TaskStatus taskStatus;
+    private TaskStatus taskStatus = TaskStatus.INITIATED;
 
     @Column(name = "validated_budget")
     private BigDecimal validatedBudget;

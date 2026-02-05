@@ -2,87 +2,298 @@
   <c-col xs="12">
     <c-card class="mb-4">
       <c-card-header>
-        <strong>Horizontal Stepper</strong> <small>10 Step Process</small>
+        <strong>{{ createMode ? 'Create New Task' : 'Task Creation Wizard' }}</strong> 
+        <small>{{ createMode ? '2-Step Process' : steps.length + '-Step Process' }}</small>
       </c-card-header>
       <c-card-body>
-        <!-- Stepper Header -->
-        <div class="stepper-container">
-          <div class="stepper-wrapper">
-            @for (step of steps; track step.id) {
-              <div 
-                class="stepper-item"
-                [class.completed]="step.completed"
-                [class.active]="step.id === currentStep"
-                [class.clickable]="isStepAccessible(step.id)"
-                (click)="isStepAccessible(step.id) ? goToStep(step.id) : null">
-                <div class="step-counter">
-                  @if (step.completed) {
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
-                      <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
-                    </svg>
-                  } @else {
-                    {{ step.id }}
-                  }
+        <c-row>
+          <!-- Vertical Stepper Sidebar -->
+          <c-col md="3" class="stepper-sidebar">
+            <div class="vertical-stepper-wrapper">
+              @for (step of steps; track step.id) {
+                @if (!createMode || step.id <= 2) {
+                <div 
+                  class="vertical-stepper-item"
+                  [class.completed]="step.completed"
+                  [class.active]="step.id === currentStep"
+                  [class.locked]="step.locked"
+                  [class.clickable]="isStepAccessible(step.id)"
+                  (click)="isStepAccessible(step.id) ? goToStep(step.id) : null">
+                  <div class="step-indicator">
+                    <div class="step-counter">
+                      @if (step.completed) {
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+                          <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+                        </svg>
+                      } @else if (step.locked) {
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-lock-fill" viewBox="0 0 16 16">
+                          <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2"/>
+                        </svg>
+                      } @else {
+                        {{ step.id }}
+                      }
+                    </div>
+                    @if (step.id < steps.length && (!createMode || step.id < 2)) {
+                      <div class="step-connector"></div>
+                    }
+                  </div>
+                  <div class="step-content-wrapper">
+                    <div class="step-name">{{ step.title }}</div>
+                  </div>
                 </div>
-                <div class="step-name">{{ step.title }}</div>
-                @if (step.id < steps.length) {
-                  <div class="step-line"></div>
                 }
-              </div>
-            }
-          </div>
-        </div>
+              }
+            </div>
+          </c-col>
 
-        <!-- Step Content -->
-        <div class="step-content mt-5">
-          <div class="card border-0 shadow-sm">
-            <div class="card-body p-4">
-              <h4 class="mb-3">{{ steps[currentStep - 1].title }}</h4>
-              <p class="text-body-secondary">
-                This is the content for <strong>{{ steps[currentStep - 1].title }}</strong>. 
-                In a real-world application, this section would contain forms, data inputs, 
-                or information relevant to this step of the process.
-              </p>
-              <div class="alert alert-info d-flex align-items-center" role="alert">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-info-circle-fill me-2" viewBox="0 0 16 16">
-                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2"/>
-                </svg>
-                <div>
-                  You are currently on step {{ currentStep }} of {{ steps.length }}.
-                </div>
+          <!-- Step Content Area -->
+          <c-col md="9">
+            <div class="step-content-area">
+              @switch (currentStep) {
+                @case (1) {
+                  <app-initiate-task 
+                    [taskId]="taskId"
+                    [readonlyMode]="readonlyMode"
+                    (taskCreated)="onTaskCreated($event)">
+                  </app-initiate-task>
+                }
+                @case (2) {
+                  <app-upload-task-document 
+                    [taskId]="createdTaskId"
+                    (documentUploaded)="onDocumentUploaded($event)">
+                  </app-upload-task-document>
+                }
+                @case (3) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Internal Review Meeting</h4>
+                    <p class="text-body-secondary">Schedule and conduct an internal review meeting to assess the task requirements and documentation. This meeting should involve key stakeholders to ensure alignment on project objectives and deliverables.</p>
+                    <div class="alert alert-info">
+                      <strong>Meeting Objectives:</strong>
+                      <ul class="mb-0 mt-2">
+                        <li>Review task documentation and requirements</li>
+                        <li>Identify potential risks and mitigation strategies</li>
+                        <li>Confirm resource availability and allocation</li>
+                      </ul>
+                    </div>
+                  </div>
+                }
+                @case (4) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Task Allocation</h4>
+                    <p class="text-body-secondary">Assign team members and resources to the task based on expertise, availability, and workload. Ensure proper distribution of responsibilities and clear communication of expectations.</p>
+                    <div class="alert alert-warning">
+                      <strong>Allocation Considerations:</strong> Balance workload distribution, consider skill requirements, and account for team member availability.
+                    </div>
+                  </div>
+                }
+                @case (5) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Task Acceptance</h4>
+                    <p class="text-body-secondary">Formal acceptance of the task by assigned team members. Team leads and members acknowledge their roles, responsibilities, and commitment to deliver within the specified timeline and quality standards.</p>
+                    <div class="alert alert-success">
+                      <strong>Acceptance Criteria:</strong> All team members have reviewed and accepted their assigned responsibilities.
+                    </div>
+                  </div>
+                }
+                @case (6) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Preliminary Scoping</h4>
+                    <p class="text-body-secondary">Conduct initial scoping activities to define project boundaries, objectives, and deliverables. Identify key stakeholders, constraints, and assumptions that will guide project planning.</p>
+                    <div class="alert alert-info">
+                      <strong>Scoping Activities:</strong> Stakeholder analysis, constraint identification, assumption documentation, and preliminary timeline estimation.
+                    </div>
+                  </div>
+                }
+                @case (7) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">WBS Submission</h4>
+                    <p class="text-body-secondary">Develop and submit the Work Breakdown Structure (WBS) that decomposes the project into manageable work packages. The WBS should clearly define all project activities and their hierarchical relationships.</p>
+                    <div class="alert alert-primary">
+                      <strong>WBS Components:</strong> Major deliverables, work packages, activities, and estimated durations for each element.
+                    </div>
+                  </div>
+                }
+                @case (8) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Concept Note Development</h4>
+                    <p class="text-body-secondary">Create a comprehensive concept note that outlines the project's rationale, objectives, methodology, and expected outcomes. This document serves as the foundation for detailed project planning.</p>
+                    <div class="alert alert-info">
+                      <strong>Key Sections:</strong> Background, objectives, methodology, timeline, budget estimate, and expected impact.
+                    </div>
+                  </div>
+                }
+                @case (9) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Internal Review</h4>
+                    <p class="text-body-secondary">Submit the concept note for internal review by technical experts and management. Incorporate feedback to ensure technical soundness and alignment with organizational standards.</p>
+                    <div class="alert alert-warning">
+                      <strong>Review Focus:</strong> Technical feasibility, resource requirements, risk assessment, and alignment with strategic objectives.
+                    </div>
+                  </div>
+                }
+                @case (10) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Finalization of Concept Note</h4>
+                    <p class="text-body-secondary">Incorporate all feedback from the internal review process and finalize the concept note. Ensure all sections are complete, accurate, and ready for stakeholder approval.</p>
+                    <div class="alert alert-success">
+                      <strong>Finalization Checklist:</strong> All feedback addressed, document formatted, quality checked, and approved by technical lead.
+                    </div>
+                  </div>
+                }
+                @case (11) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Inception Report Development</h4>
+                    <p class="text-body-secondary">Develop a detailed inception report that expands on the concept note with specific methodologies, detailed work plans, and resource allocation. This report guides the implementation phase.</p>
+                    <div class="alert alert-info">
+                      <strong>Report Components:</strong> Detailed methodology, work plan, quality assurance framework, and risk management plan.
+                    </div>
+                  </div>
+                }
+                @case (12) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Quality Review and Enhancement Meeting</h4>
+                    <p class="text-body-secondary">Conduct a quality review meeting to evaluate the inception report against organizational quality standards. Identify enhancement opportunities and ensure compliance with best practices.</p>
+                    <div class="alert alert-primary">
+                      <strong>Quality Focus:</strong> Methodology rigor, completeness, clarity, and alignment with quality standards.
+                    </div>
+                  </div>
+                }
+                @case (13) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Inception Report Finalization and Submission</h4>
+                    <p class="text-body-secondary">Finalize the inception report by incorporating feedback from the quality review. Submit the completed report for stakeholder review and approval before proceeding to implementation.</p>
+                    <div class="alert alert-success">
+                      <strong>Submission Requirements:</strong> Final report with all annexes, quality checklist, and approval signatures.
+                    </div>
+                  </div>
+                }
+                @case (14) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Inception Meeting</h4>
+                    <p class="text-body-secondary">Organize and conduct the inception meeting with all stakeholders to formally launch the project. Present the inception report, clarify roles, and establish communication protocols.</p>
+                    <div class="alert alert-info">
+                      <strong>Meeting Agenda:</strong> Project overview, roles and responsibilities, timeline review, communication plan, and Q&A session.
+                    </div>
+                  </div>
+                }
+                @case (15) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Task Execution</h4>
+                    <p class="text-body-secondary">Begin implementation of planned activities according to the approved work plan. Execute tasks, monitor progress, and maintain regular communication with stakeholders.</p>
+                    <div class="alert alert-primary">
+                      <strong>Execution Focus:</strong> Follow approved methodology, maintain quality standards, track milestones, and document progress.
+                    </div>
+                  </div>
+                }
+                @case (16) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Implementation and Data Collection</h4>
+                    <p class="text-body-secondary">Carry out field activities and data collection according to the approved methodology. Ensure data quality, maintain proper documentation, and address any implementation challenges.</p>
+                    <div class="alert alert-warning">
+                      <strong>Data Quality:</strong> Follow data collection protocols, ensure completeness, validate entries, and maintain confidentiality.
+                    </div>
+                  </div>
+                }
+                @case (17) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Draft Reporting and Validation</h4>
+                    <p class="text-body-secondary">Prepare draft reports based on collected data and analysis. Conduct validation sessions with stakeholders to verify findings and ensure accuracy of conclusions.</p>
+                    <div class="alert alert-info">
+                      <strong>Validation Process:</strong> Data verification, stakeholder consultation, findings review, and recommendation refinement.
+                    </div>
+                  </div>
+                }
+                @case (18) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Final Reporting and Completion</h4>
+                    <p class="text-body-secondary">Finalize all project reports incorporating validation feedback. Prepare final deliverables, compile documentation, and ensure all contractual obligations are met.</p>
+                    <div class="alert alert-success">
+                      <strong>Final Deliverables:</strong> Final report, executive summary, raw data, analysis files, and lessons learned document.
+                    </div>
+                  </div>
+                }
+                @case (19) {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">Exit and Sustainability Planning</h4>
+                    <p class="text-body-secondary">Develop exit and sustainability strategies to ensure project benefits continue beyond completion. Document lessons learned, conduct knowledge transfer, and establish follow-up mechanisms.</p>
+                    <div class="alert alert-primary">
+                      <strong>Sustainability Focus:</strong> Knowledge transfer, capacity building, follow-up plan, and recommendations for future actions.
+                    </div>
+                  </div>
+                }
+                @default {
+                  <div class="placeholder-content">
+                    <h4 class="mb-3">{{ steps[currentStep - 1].title }}</h4>
+                    <p class="text-body-secondary">Content for this step is being developed.</p>
+                  </div>
+                }
+              }
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="d-flex justify-content-between mt-4">
+              <div class="d-flex gap-2">
+                <button 
+                  type="button" 
+                  cButton 
+                  color="secondary"
+                  variant="outline"
+                  (click)="cancel()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg me-2" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                  </svg>
+                  Cancel
+                </button>
+                
+                <button 
+                  type="button" 
+                  cButton 
+                  color="secondary"
+                  [disabled]="currentStep === 1"
+                  (click)="previousStep()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+                  </svg>
+                  Previous
+                </button>
+              </div>
+
+              <div class="d-flex gap-2">
+                @if (showSaveAsDraftButton()) {
+                  <button 
+                    type="button" 
+                    cButton 
+                    color="warning"
+                    variant="outline"
+                    (click)="saveAsDraft()"
+                    [disabled]="initiateTaskComponent?.isSubmitting || uploadTaskDocumentComponent?.isSubmitting">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-save me-2" viewBox="0 0 16 16">
+                      <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1z"/>
+                    </svg>
+                    Save as Draft
+                  </button>
+                }
+                
+                <button 
+                  type="button" 
+                  cButton 
+                  [color]="currentStep === steps.length ? 'success' : 'primary'"
+                  [disabled]="isNextButtonDisabled()"
+                  (click)="nextStep()">
+                  @if (isSubmitting) {
+                    <c-spinner size="sm" class="me-2"></c-spinner>
+                  }
+                  {{ getNextButtonLabel() }}
+                  @if (currentStep < steps.length && !isSubmitting) {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right ms-2" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+                    </svg>
+                  }
+                </button>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Navigation Buttons -->
-        <div class="d-flex justify-content-between mt-4">
-          <button 
-            type="button" 
-            cButton 
-            color="secondary"
-            [disabled]="currentStep === 1"
-            (click)="previousStep()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
-              <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
-            </svg>
-            Previous
-          </button>
-          
-          <button 
-            type="button" 
-            cButton 
-            [color]="currentStep === steps.length ? 'success' : 'primary'"
-            [disabled]="currentStep === steps.length"
-            (click)="nextStep()">
-            {{ currentStep === steps.length ? 'Completed' : 'Next' }}
-            @if (currentStep < steps.length) {
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right ms-2" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
-              </svg>
-            }
-          </button>
-        </div>
+          </c-col>
+        </c-row>
       </c-card-body>
     </c-card>
   </c-col>

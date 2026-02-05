@@ -87,7 +87,7 @@ public class Document extends BaseEntity {
 
     @Getter
     public enum DocumentType {
-        WBS, CONCEPT_NOTE, INCEPTION_REPORT, DRAFT_REPORT, FINAL_REPORT;
+        TASK_DOCUMENT, WBS, CONCEPT_NOTE, INCEPTION_REPORT, DRAFT_REPORT, FINAL_REPORT;
 
         @JsonValue
         public String getName() {

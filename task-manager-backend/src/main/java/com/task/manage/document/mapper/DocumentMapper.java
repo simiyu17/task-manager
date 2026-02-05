@@ -14,6 +14,7 @@ public interface DocumentMapper {
 
     @Mapping(target = "taskId", source = "task.id")
     @Mapping(target = "documentType", expression = "java(documentTypeToString(document.getDocumentType()))")
+    @Mapping(target = "fileName", expression = "java(extractFileName(document.getFilePath()))")
     @Mapping(target = "fileLocation", expression = "java(fileLocationToString(document.getFileLocation()))")
     @Mapping(target = "isFinal", source = "final")
     DocumentResponseDto toResponseDto(Document document);
@@ -24,5 +25,13 @@ public interface DocumentMapper {
 
     default String fileLocationToString(Document.FileLocation fileLocation) {
         return fileLocation != null ? fileLocation.name() : null;
+    }
+
+    default String extractFileName(String filePath) {
+        if (filePath == null || filePath.isEmpty()) {
+            return null;
+        }
+        int lastSeparatorIndex = Math.max(filePath.lastIndexOf('/'), filePath.lastIndexOf('\\'));
+        return lastSeparatorIndex >= 0 ? filePath.substring(lastSeparatorIndex + 1) : filePath;
     }
 }

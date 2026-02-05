@@ -14,6 +14,12 @@
     "ng": "ng",
     "start": "ng serve -o",
     "build": "ng build",
+    "build:prod": "ng build --configuration=production",
+    "build:staging": "ng build --configuration=staging",
+    "build:docker": "ng build --configuration=docker",
+    "serve:prod": "ng serve --configuration=production -o",
+    "serve:staging": "ng serve --configuration=staging -o",
+    "serve:docker": "ng serve --configuration=docker -o",
     "watch": "ng build --watch --configuration development",
     "prebuild": "ng test --watch=false --browsers=ChromeHeadless",
     "test": "ng test"

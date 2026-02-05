@@ -7,6 +7,7 @@ public record DocumentResponseDto(
         Long taskId,
         Integer version,
         String documentType,
+        String fileName,
         String filePath,
         String fileLocation,
         boolean isFinal,

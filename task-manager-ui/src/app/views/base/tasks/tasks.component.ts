@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { RouterLink, Router } from '@angular/router';
 import {
   CardBodyComponent,
   CardComponent,
@@ -12,6 +13,8 @@ import {
   PageLinkDirective,
   PaginationComponent
 } from '@coreui/angular';
+import { TasksStepperComponent } from './tasks-stepper/tasks-stepper.component';
+import { TaskService, TaskResponse } from '../../../services/task/task.service';
 
 interface Task {
   id: number;
@@ -27,6 +30,7 @@ interface Task {
   selector: 'app-tasks',
   imports: [
     CommonModule,
+    RouterLink,
     RowComponent,
     ColComponent,
     CardComponent,
@@ -38,6 +42,7 @@ interface Task {
     PageItemComponent,
     PageLinkDirective
   ],
+  providers: [DatePipe],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.scss',
 })
@@ -48,68 +53,68 @@ export class TasksComponent implements OnInit {
   itemsPerPage = 10;
   totalPages = 0;
   Math = Math;
+  isLoading = true;
+
+  constructor(
+    private taskService: TaskService,
+    private cdr: ChangeDetectorRef,
+    private datePipe: DatePipe,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.generateMockTasks();
-    this.updatePagination();
+    this.loadTasks();
   }
 
-  generateMockTasks(): void {
-    const taskNames = [
-      'Implement User Authentication',
-      'Design Database Schema',
-      'Create API Endpoints',
-      'Build Frontend Components',
-      'Write Unit Tests',
-      'Setup CI/CD Pipeline',
-      'Perform Code Review',
-      'Update Documentation',
-      'Fix Bug in Payment Module',
-      'Optimize Database Queries',
-      'Integrate Third-party API',
-      'Refactor Legacy Code',
-      'Create User Dashboard',
-      'Implement Search Feature',
-      'Setup Monitoring Tools',
-      'Configure Load Balancer',
-      'Migrate to Microservices',
-      'Implement Caching Strategy',
-      'Security Audit',
-      'Performance Testing',
-      'Deploy to Production',
-      'Create Admin Panel',
-      'Implement Notification System',
-      'Setup Backup Strategy',
-      'Mobile App Integration',
-      'Implement Analytics',
-      'Create Reports Module',
-      'Setup Email Templates',
-      'Implement File Upload',
-      'Create Export Feature'
-    ];
+  loadTasks(): void {
+    this.isLoading = true;
+    this.taskService.getAllTasks().subscribe({
+      next: (response: TaskResponse[]) => {
+        this.tasks = response.map(task => ({
+          id: task.id,
+          taskName: task.title,
+          assignedTo: task.assignedPartner?.name || 'Unassigned',
+          priority: this.calculatePriority(),
+          status: this.mapTaskStatus(task.taskStatus),
+          dueDate: task.deadline ? this.formatDate(task.deadline) : 'No deadline',
+          progress: this.calculateProgress()
+        }));
+        this.updatePagination();
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading tasks:', error);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+        // Optionally show error message to user
+      }
+    });
+  }
 
-    const assignees = ['John Doe', 'Jane Smith', 'Mike Johnson', 'Sarah Williams', 'David Brown', 'Emily Davis', 'Chris Wilson', 'Amanda Taylor'];
+  calculatePriority(): string {
     const priorities = ['High', 'Medium', 'Low', 'Critical'];
-    const statuses = ['In Progress', 'Completed', 'Pending', 'On Hold', 'Review'];
-
-    for (let i = 0; i < 30; i++) {
-      this.tasks.push({
-        id: i + 1,
-        taskName: taskNames[i],
-        assignedTo: assignees[Math.floor(Math.random() * assignees.length)],
-        priority: priorities[Math.floor(Math.random() * priorities.length)],
-        status: statuses[Math.floor(Math.random() * statuses.length)],
-        dueDate: this.getRandomDate(),
-        progress: Math.floor(Math.random() * 101)
-      });
-    }
+    return priorities[Math.floor(Math.random() * priorities.length)];
   }
 
-  getRandomDate(): string {
-    const start = new Date(2026, 1, 1);
-    const end = new Date(2026, 11, 31);
-    const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-    return date.toISOString().split('T')[0];
+  calculateProgress(): number {
+    return Math.floor(Math.random() * 101);
+  }
+
+  mapTaskStatus(apiStatus: string): string {
+    // Map API status to display status if needed
+    const statusMap: { [key: string]: string } = {
+      'PENDING': 'Pending',
+      'IN_PROGRESS': 'In Progress',
+      'COMPLETED': 'Completed',
+      'ON_HOLD': 'On Hold',
+      'REVIEW': 'Review'
+    };
+    return statusMap[apiStatus] || apiStatus;
+  }
+
+  formatDate(dateString: string): string {
+    return this.datePipe.transform(dateString, 'dd MMM, yyyy') || dateString;
   }
 
   updatePagination(): void {
@@ -148,8 +153,7 @@ export class TasksComponent implements OnInit {
   }
 
   onEdit(task: Task): void {
-    console.log('Edit task:', task);
-    // Implement edit logic
+    this.router.navigate(['/base/tasks', task.id, 'edit']);
   }
 
   onDelete(task: Task): void {
@@ -160,12 +164,6 @@ export class TasksComponent implements OnInit {
   }
 
   onView(task: Task): void {
-    console.log('View task:', task);
-    // Implement view logic
-  }
-
-  onCreate(): void {
-    console.log('Create new task');
-    // Implement create logic
+    this.router.navigate(['/base/tasks', task.id, 'view']);
   }
 }

@@ -1,0 +1,72 @@
+<div class="container-fluid">
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && task">
+    <app-tasks-stepper 
+      [createMode]="false"
+      [taskId]="taskId"
+      [readonlyMode]="true"
+      (taskCreated)="onProgressUpdated($event)"
+    ></app-tasks-stepper>
+
+    <!-- Task Documents Table (only TASK_DOCUMENT type) -->
+    <div class="mt-4" *ngIf="documents.length > 0">
+      <c-card>
+        <c-card-header>
+          <strong>Task Documents</strong>
+        </c-card-header>
+        <c-card-body>
+          <table cTable [striped]="true" [hover]="true">
+            <thead>
+              <tr>
+                <th>File Name</th>
+                <th>Upload Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let doc of documents">
+                <td>{{ doc.fileName }}</td>
+                <td>{{ formatDate(doc.uploadDate) }}</td>
+                <td>
+                  <c-badge [color]="doc.isFinal ? 'success' : 'warning'">
+                    {{ doc.isFinal ? 'Final' : 'Draft' }}
+                  </c-badge>
+                </td>
+                <td>
+                  <button 
+                    cButton 
+                    color="info" 
+                    size="sm" 
+                    class="me-2"
+                    (click)="viewDocument(doc)"
+                    [disabled]="!doc.fileName.toLowerCase().endsWith('.pdf')"
+                  >
+                    <svg cIcon name="cilEye"></svg> View
+                  </button>
+                  <button 
+                    cButton 
+                    color="primary" 
+                    size="sm"
+                    (click)="downloadDocument(doc)"
+                  >
+                    <svg cIcon name="cilCloudDownload"></svg> Download
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </c-card-body>
+      </c-card>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !task" class="alert alert-danger">
+    <strong>Error:</strong> Task not found.
+  </div>
+</div>

@@ -1,0 +1,23 @@
+.detail-item {
+  margin-bottom: 1rem;
+
+  .detail-label {
+    font-weight: 600;
+    color: var(--cui-secondary);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+    display: block;
+  }
+
+  .detail-value {
+    color: var(--cui-body-color);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+}
+
+hr {
+  border-color: var(--cui-border-color);
+}
