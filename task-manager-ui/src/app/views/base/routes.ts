@@ -151,6 +151,13 @@ export const routes: Routes = [
         data: {
           title: 'Tooltips'
         }
+      },
+      {
+        path: 'coming-soon',
+        loadComponent: () => import('./coming-soon/coming-soon.component').then(m => m.ComingSoonComponent),
+        data: {
+          title: 'Coming Soon'
+        }
       }
     ]
   }

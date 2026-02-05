@@ -1,0 +1,12 @@
+.min-vh-50 {
+  min-height: 50vh;
+}
+
+c-card {
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  
+  &:hover {
+    border-color: rgba(0, 123, 255, 0.25);
+    transition: border-color 0.3s ease;
+  }
+}

@@ -63,8 +63,8 @@ export class TasksStepperComponent implements AfterViewInit {
   }
   
   steps: Step[] = [
-    { id: 1, title: 'Initiate Task', completed: false, locked: false },
-    { id: 2, title: 'Upload Document', completed: false, locked: true },
+    { id: 1, title: 'Basic Information', completed: false, locked: false },
+    { id: 2, title: 'Task Documents', completed: false, locked: true },
     { id: 3, title: 'Internal Review Meeting', completed: false, locked: true },
     { id: 4, title: 'Task Allocation', completed: false, locked: true },
     { id: 5, title: 'Task Acceptance', completed: false, locked: true },
