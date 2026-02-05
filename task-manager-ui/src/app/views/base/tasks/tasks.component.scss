@@ -1,0 +1,23 @@
+// Tasks table styles
+.table-responsive {
+  overflow-x: auto;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.35em 0.65em;
+}
+
+.progress {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+button[cButton][size="sm"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  svg {
+    flex-shrink: 0;
+  }
+}

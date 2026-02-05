@@ -1,0 +1,89 @@
+<c-row>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>Horizontal Stepper</strong> <small>10 Step Process</small>
+      </c-card-header>
+      <c-card-body>
+        <!-- Stepper Header -->
+        <div class="stepper-container">
+          <div class="stepper-wrapper">
+            @for (step of steps; track step.id) {
+              <div 
+                class="stepper-item"
+                [class.completed]="step.completed"
+                [class.active]="step.id === currentStep"
+                [class.clickable]="isStepAccessible(step.id)"
+                (click)="isStepAccessible(step.id) ? goToStep(step.id) : null">
+                <div class="step-counter">
+                  @if (step.completed) {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+                      <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+                    </svg>
+                  } @else {
+                    {{ step.id }}
+                  }
+                </div>
+                <div class="step-name">{{ step.title }}</div>
+                @if (step.id < steps.length) {
+                  <div class="step-line"></div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Step Content -->
+        <div class="step-content mt-5">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+              <h4 class="mb-3">{{ steps[currentStep - 1].title }}</h4>
+              <p class="text-body-secondary">
+                This is the content for <strong>{{ steps[currentStep - 1].title }}</strong>. 
+                In a real-world application, this section would contain forms, data inputs, 
+                or information relevant to this step of the process.
+              </p>
+              <div class="alert alert-info d-flex align-items-center" role="alert">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-info-circle-fill me-2" viewBox="0 0 16 16">
+                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2"/>
+                </svg>
+                <div>
+                  You are currently on step {{ currentStep }} of {{ steps.length }}.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="d-flex justify-content-between mt-4">
+          <button 
+            type="button" 
+            cButton 
+            color="secondary"
+            [disabled]="currentStep === 1"
+            (click)="previousStep()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+            </svg>
+            Previous
+          </button>
+          
+          <button 
+            type="button" 
+            cButton 
+            [color]="currentStep === steps.length ? 'success' : 'primary'"
+            [disabled]="currentStep === steps.length"
+            (click)="nextStep()">
+            {{ currentStep === steps.length ? 'Completed' : 'Next' }}
+            @if (currentStep < steps.length) {
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right ms-2" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+              </svg>
+            }
+          </button>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
