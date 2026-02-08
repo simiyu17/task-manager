@@ -45,6 +45,8 @@
     "@coreui/icons-angular": "~5.6.10",
     "@coreui/utils": "^2.0.2",
     "chart.js": "^4.5.1",
+    "keycloak-angular": "^21.0.0",
+    "keycloak-js": "^26.2.3",
     "lodash-es": "^4.17.23",
     "ngx-scrollbar": "^13.0.3",
     "rxjs": "~7.8.2",

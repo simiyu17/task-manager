@@ -5,6 +5,9 @@
 export const environment = {
   production: false,
   apiBaseUrl: 'http://localhost:8082/task-manager/api/v1',
+  authBaseUrl: 'http://localhost:8080',
+  authRealmName: 'task-manager',
+  authClientId: 'task-manager-ui-client',
   apiTimeout: 30000
 };
 

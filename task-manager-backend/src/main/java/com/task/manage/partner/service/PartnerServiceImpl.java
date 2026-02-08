@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -83,7 +82,7 @@ public class PartnerServiceImpl implements PartnerService {
 
         return partners.stream()
                 .map(partnerMapper::toResponseDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

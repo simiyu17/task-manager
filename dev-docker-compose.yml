@@ -13,8 +13,6 @@ services:
       KC_DB_URL: jdbc:postgresql://host.docker.internal:5433/keycloak_db
       KC_DB_USERNAME: root
       KC_DB_PASSWORD: postgres
-      KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
     volumes:
       - ./realm-export.json:/opt/keycloak/data/import/realm.json:ro
    

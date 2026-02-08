@@ -7,6 +7,7 @@
             <strong>Tasks Management</strong> <small>Paginated Table</small>
           </div>
           <button 
+          *ngIf="authService.hasPermission('task:create')"
               type="button" 
               cButton 
               color="primary"

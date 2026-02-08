@@ -1,6 +1,6 @@
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
@@ -12,10 +12,22 @@ import {
 import { IconSetService } from '@coreui/icons-angular';
 import { routes } from './app.routes';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ApiInterceptor } from './interceptors/api.interceptor';
+import { apiInterceptor } from './interceptors/api.interceptor';
+import { 
+  provideKeycloak, 
+  createInterceptorCondition, 
+  IncludeBearerTokenCondition, 
+  INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
+  UserActivityService,
+  withAutoRefreshToken,
+  includeBearerTokenInterceptor,
+  AutoRefreshTokenService
+} from 'keycloak-angular';
+import { environment } from 'src/environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes,
       withRouterConfig({
         onSameUrlNavigation: 'reload'
@@ -26,16 +38,46 @@ export const appConfig: ApplicationConfig = {
       }),
       withEnabledBlockingInitialNavigation(),
       withViewTransitions(),
-      withHashLocation()
+      withHashLocation(),
     ),
     IconSetService,
     provideAnimationsAsync(),
-    provideHttpClient(withInterceptorsFromDi()),
+    // 1. Configure Keycloak
+    provideKeycloak({
+      config: {
+        url: environment.authBaseUrl, // Base URL of Keycloak
+        realm: environment.authRealmName, // Keycloak Realm
+        clientId: environment.authClientId, // Keycloak Client ID
+      },
+      initOptions: {
+        onLoad: 'check-sso', // Checks if user is logged in without redirecting immediately
+        silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html'
+      },
+      // Modern feature: Auto refresh token based on user activity
+      features: [
+        withAutoRefreshToken({
+          onInactivityTimeout: 'logout',
+          sessionTimeout: 60000 
+        })
+      ]
+    }),
+    // 2. Configure Auto-Interceptor to add Token to Requests
     {
-      provide: HTTP_INTERCEPTORS,
-      useClass: ApiInterceptor,
-      multi: true
-    }
+      provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
+      useValue: [
+        createInterceptorCondition<IncludeBearerTokenCondition>({
+          urlPattern: new RegExp(`^(${environment.apiBaseUrl})(?:/.*)?$`), // Match Spring Boot Port
+        })
+      ]
+    },
+    // 3. Register HTTP Client with the Interceptor
+    provideHttpClient(withInterceptors([
+      apiInterceptor,
+      includeBearerTokenInterceptor
+    ])),
+    // 4. Required services for auto-refresh
+    UserActivityService,
+    AutoRefreshTokenService
   ]
 };
 
