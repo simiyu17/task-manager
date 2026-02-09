@@ -1,6 +1,6 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
@@ -11,7 +11,6 @@ import {
 } from '@angular/router';
 import { IconSetService } from '@coreui/icons-angular';
 import { routes } from './app.routes';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { apiInterceptor } from './interceptors/api.interceptor';
 import { 
   provideKeycloak, 
@@ -23,7 +22,7 @@ import {
   includeBearerTokenInterceptor,
   AutoRefreshTokenService
 } from 'keycloak-angular';
-import { environment } from 'src/environments/environment';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
