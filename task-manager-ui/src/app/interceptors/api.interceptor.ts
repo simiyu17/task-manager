@@ -18,6 +18,5 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
     url: `${environment.apiBaseUrl}/${endpoint}`
   });
 
-  console.log('[ApiInterceptor] Prepended base URL:', apiReq.url);
   return next(apiReq);
 };
