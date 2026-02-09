@@ -101,7 +101,6 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional(readOnly = true)
     public List<TaskResponseDto> getAllTasks() {
-        log.info("Fetching all tasks");
 
         List<Task> tasks = taskRepository.findAll();
 
@@ -113,9 +112,6 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional(readOnly = true)
     public Page<TaskResponseDto> getAllTasksPaginated(Pageable pageable) {
-        log.info("Fetching all tasks with pagination - page: {}, size: {}",
-                pageable.getPageNumber(), pageable.getPageSize());
-
         Page<Task> taskPage = taskRepository.findAll(pageable);
 
         return taskPage.map(taskMapper::toResponseDto);

@@ -33,12 +33,11 @@ public class JwtTokenInspector {
         log.info("Authentication principal: {}", authentication.getPrincipal().getClass().getSimpleName());
         log.info("Authentication name: {}", authentication.getName());
 
-        if (!(authentication instanceof JwtAuthenticationToken)) {
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
             log.warn("Authentication is not JwtAuthenticationToken, cannot inspect JWT claims");
             return;
         }
 
-        JwtAuthenticationToken jwtAuth = (JwtAuthenticationToken) authentication;
         Jwt jwt = jwtAuth.getToken();
 
         log.info("=== JWT Token Details ===");
@@ -50,9 +49,7 @@ public class JwtTokenInspector {
 
         log.info("=== All JWT Claims ===");
         Map<String, Object> claims = jwt.getClaims();
-        claims.forEach((key, value) -> {
-            log.info("  {}: {} (type: {})", key, value, value != null ? value.getClass().getSimpleName() : "null");
-        });
+        claims.forEach((key, value) -> log.info("  {}: {} (type: {})", key, value, value != null ? value.getClass().getSimpleName() : "null"));
 
         log.info("=== Commonly Used Claims for Auditing ===");
         log.info("  preferred_username: {}", jwt.getClaimAsString("preferred_username"));
@@ -69,11 +66,10 @@ public class JwtTokenInspector {
     public String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !(authentication instanceof JwtAuthenticationToken)) {
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
             return "UNKNOWN";
         }
 
-        JwtAuthenticationToken jwtAuth = (JwtAuthenticationToken) authentication;
         Jwt jwt = jwtAuth.getToken();
 
         // Try the same strategies as KeycloakAuditorAware
@@ -106,11 +102,10 @@ public class JwtTokenInspector {
     public boolean hasClaim(String claimName) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !(authentication instanceof JwtAuthenticationToken)) {
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
             return false;
         }
 
-        JwtAuthenticationToken jwtAuth = (JwtAuthenticationToken) authentication;
         return jwtAuth.getToken().hasClaim(claimName);
     }
 
@@ -120,11 +115,10 @@ public class JwtTokenInspector {
     public Object getClaim(String claimName) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !(authentication instanceof JwtAuthenticationToken)) {
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
             return null;
         }
 
-        JwtAuthenticationToken jwtAuth = (JwtAuthenticationToken) authentication;
         return jwtAuth.getToken().getClaim(claimName);
     }
 }

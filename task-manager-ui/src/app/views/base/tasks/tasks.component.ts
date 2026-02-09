@@ -15,6 +15,7 @@ import {
 } from '@coreui/angular';
 import { TasksStepperComponent } from './tasks-stepper/tasks-stepper.component';
 import { TaskService, TaskResponse } from '../../../services/task/task.service';
+import { AuthService } from '../../../services/users/auth.service';
 
 interface Task {
   id: number;
@@ -59,7 +60,8 @@ export class TasksComponent implements OnInit {
     private taskService: TaskService,
     private cdr: ChangeDetectorRef,
     private datePipe: DatePipe,
-    private router: Router
+    private router: Router,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {

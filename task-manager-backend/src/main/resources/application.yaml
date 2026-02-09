@@ -36,7 +36,7 @@ spring:
       resourceserver:
         jwt:
           # The URL Keycloak realm
-          issuer-uri: http://localhost:8080/realms/production
+          issuer-uri: http://localhost:8080/realms/task-manager
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
@@ -53,4 +53,3 @@ server:
 
 file:
   upload-dir: ${FILE_UPLOAD_DIR:./uploads}
-

@@ -28,13 +28,11 @@ public class KeycloakAuditorAware implements AuditorAware<String> {
         }
 
         // Check if the authentication is a JwtAuthenticationToken
-        if (!(authentication instanceof JwtAuthenticationToken)) {
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuthentication)) {
             log.warn("Authentication is not JwtAuthenticationToken, type: {}. Returning authentication name: {}",
                     authentication.getClass().getName(), authentication.getName());
             return Optional.ofNullable(authentication.getName());
         }
-
-        JwtAuthenticationToken jwtAuthentication = (JwtAuthenticationToken) authentication;
 
         // Log all available claims to help debug
         log.debug("JWT Token Claims: {}", jwtAuthentication.getToken().getClaims());
