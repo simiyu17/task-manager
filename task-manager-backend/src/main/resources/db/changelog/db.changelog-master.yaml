@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/changes/005-add-review-comments-table.yaml
   - include:
       file: db/changelog/changes/006-add-clarifying-questions-table.yaml
+  - include:
+      file: db/changelog/changes/007-add-donors-table.yaml

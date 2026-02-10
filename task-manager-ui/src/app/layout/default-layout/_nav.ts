@@ -11,6 +11,11 @@ export const navItems: INavData[] = [
     name: 'Configuration'
   },
   {
+    name: 'Donors',
+    url: '/base/donors',
+    iconComponent: { name: 'cil-drop' }
+  },
+   {
     name: 'Email Settings',
     url: '/base/coming-soon',
     iconComponent: { name: 'cil-drop' }

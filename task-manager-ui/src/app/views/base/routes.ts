@@ -24,6 +24,7 @@ export const routes: Routes = [
       {
         path: 'tasks/initiate-task',
         loadComponent: () => import('./tasks/tasks-stepper/tasks-stepper.component').then(m => m.TasksStepperComponent),
+        canActivate: [AuthGuard],
         data: {
           title: 'Initiate Task'
         }
@@ -31,6 +32,7 @@ export const routes: Routes = [
       {
         path: 'tasks/:id/view',
         loadComponent: () => import('./tasks/view-task/view-task.component').then(m => m.ViewTaskComponent),
+        canActivate: [AuthGuard],
         data: {
           title: 'View Task'
         }
@@ -38,6 +40,7 @@ export const routes: Routes = [
       {
         path: 'tasks/:id/edit',
         loadComponent: () => import('./tasks/edit-task/edit-task.component').then(m => m.EditTaskComponent),
+        canActivate: [AuthGuard],
         data: {
           title: 'Edit Task'
         }
@@ -45,8 +48,41 @@ export const routes: Routes = [
       {
         path: 'tasks/:id/update-progress',
         loadComponent: () => import('./tasks/update-task-progress/update-task-progress.component').then(m => m.UpdateTaskProgressComponent),
+        canActivate: [AuthGuard],
         data: {
           title: 'Update Task Progress'
+        }
+      },
+      {
+        path: 'donors',
+        loadComponent: () => import('./donor/donor.component').then(m => m.DonorComponent),
+        canActivate: [AuthGuard],
+        data: {
+          title: 'Donors'
+        }
+      },
+      {
+        path: 'donors/create',
+        loadComponent: () => import('./donor/create-donor/create-donor.component').then(m => m.CreateDonorComponent),
+        canActivate: [AuthGuard],
+        data: {
+          title: 'Create Donor'
+        }
+      },
+      {
+        path: 'donors/:id/view',
+        loadComponent: () => import('./donor/view-donor/view-donor.component').then(m => m.ViewDonorComponent),
+        canActivate: [AuthGuard],
+        data: {
+          title: 'View Donor'
+        }
+      },
+      {
+        path: 'donors/:id/edit',
+        loadComponent: () => import('./donor/edit-donor/edit-donor.component').then(m => m.EditDonorComponent),
+        canActivate: [AuthGuard],
+        data: {
+          title: 'Edit Donor'
         }
       },
       {
@@ -157,6 +193,7 @@ export const routes: Routes = [
       {
         path: 'coming-soon',
         loadComponent: () => import('./coming-soon/coming-soon.component').then(m => m.ComingSoonComponent),
+        canActivate: [AuthGuard],
         data: {
           title: 'Coming Soon'
         }
