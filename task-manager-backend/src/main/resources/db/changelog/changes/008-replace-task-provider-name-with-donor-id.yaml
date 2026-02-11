@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: 008-replace-task-provider-name-with-donor-id
+      author: admin
+      changes:
+        # Drop the task_provider_name column
+        - dropColumn:
+            tableName: tasks
+            columnName: task_provider_name
+
+        # Add donor_id column
+        - addColumn:
+            tableName: tasks
+            columns:
+              - column:
+                  name: donor_id
+                  type: BIGINT
+
+        # Add foreign key constraint
+        - addForeignKeyConstraint:
+            baseTableName: tasks
+            baseColumnNames: donor_id
+            constraintName: fk_tasks_donor
+            referencedTableName: donors
+            referencedColumnNames: id
+            onDelete: RESTRICT
+            onUpdate: CASCADE
+
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: tasks
+            constraintName: fk_tasks_donor
+
+        - dropColumn:
+            tableName: tasks
+            columnName: donor_id
+
+        - addColumn:
+            tableName: tasks
+            columns:
+              - column:
+                  name: task_provider_name
+                  type: VARCHAR(255)
+

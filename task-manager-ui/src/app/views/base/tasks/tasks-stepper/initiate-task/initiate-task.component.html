@@ -64,27 +64,28 @@
 
     <c-row class="mb-3">
       <c-col md="6">
-        <label cFormLabel for="taskProviderName">Task Provider Name <span class="text-danger">*</span></label>
-        <input
+        <label cFormLabel for="donorId">Donor <span class="text-danger">*</span></label>
+        <select
           cFormControl
-          id="taskProviderName"
-          type="text"
-          formControlName="taskProviderName"
-          placeholder="Enter provider name"
-          [class.is-invalid]="f['taskProviderName'].invalid && f['taskProviderName'].touched"
-        />
-        @if (f['taskProviderName'].invalid && f['taskProviderName'].touched) {
+          cSelect
+          id="donorId"
+          formControlName="donorId"
+          [class.is-invalid]="f['donorId'].invalid && f['donorId'].touched"
+        >
+          <option [ngValue]="null" disabled>Select a donor</option>
+          @for (donor of donors; track donor.id) {
+            <option [ngValue]="donor.id">{{ donor.donorName }}</option>
+          }
+        </select>
+        @if (f['donorId'].invalid && f['donorId'].touched) {
           <c-form-feedback [valid]="false">
-            @if (f['taskProviderName'].errors?.['required']) {
-              Task provider name is required.
-            }
-            @if (f['taskProviderName'].errors?.['minlength']) {
-              Provider name must be at least 2 characters long.
-            }
-            @if (f['taskProviderName'].errors?.['maxlength']) {
-              Provider name cannot exceed 100 characters.
+            @if (f['donorId'].errors?.['required']) {
+              Donor is required.
             }
           </c-form-feedback>
+        }
+        @if (isLoadingDonors) {
+          <small class="text-body-secondary d-block mt-1">Loading donors...</small>
         }
       </c-col>
 

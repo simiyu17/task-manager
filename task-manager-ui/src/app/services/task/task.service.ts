@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../api.service';
 import { TaskRequestDto } from '../../views/base/tasks/dto/task-request-dto';
+import { DonorResponseDto } from '../donor/donor.service';
 
 export interface Task {
   id: string;
@@ -16,17 +17,20 @@ export interface Task {
 }
 
 export interface TaskResponse {
-id: number;
-title: string;
-taskProviderName: string;
-description: string;
-assignedPartner?: PartnerResponseDto;
-taskStatus: string;
-validatedBudget?: number;
-requestReceivedAt?: string;
-acceptedAt?: string;
-deadline?: string;
-dateCreated: string;
+  id: number;
+  title: string;
+  donor: DonorResponseDto;
+  description: string;
+  assignedPartner?: PartnerResponseDto;
+  taskStatus: string;
+  validatedBudget?: number;
+  requestReceivedAt?: string;
+  acceptedAt?: string;
+  deadline?: string;
+  dateCreated: string;
+  lastModified: string;
+  createdBy: string;
+  lastModifiedBy: string;
 }
 
 export interface PartnerResponseDto {

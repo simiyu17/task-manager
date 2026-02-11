@@ -6,10 +6,12 @@ import {
   RowComponent,
   FormControlDirective,
   FormDirective,
-  FormFeedbackComponent
+  FormFeedbackComponent,
+  FormSelectDirective
 } from '@coreui/angular';
 import { TaskRequestDto } from '../../dto/task-request-dto';
 import { TaskService } from '../../../../../services/task/task.service';
+import { DonorService, DonorResponseDto } from '../../../../../services/donor/donor.service';
 
 @Component({
   selector: 'app-initiate-task',
@@ -21,7 +23,8 @@ import { TaskService } from '../../../../../services/task/task.service';
     ColComponent,
     FormDirective,
     FormControlDirective,
-    FormFeedbackComponent
+    FormFeedbackComponent,
+    FormSelectDirective
   ],
   templateUrl: './initiate-task.component.html',
   styleUrl: './initiate-task.component.scss'
@@ -36,10 +39,13 @@ export class InitiateTaskComponent implements OnInit {
   errorMessage = '';
   minDate: string;
   isEditMode = false;
+  donors: DonorResponseDto[] = [];
+  isLoadingDonors = false;
 
   constructor(
     private fb: FormBuilder,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private donorService: DonorService
   ) {
     // Set minimum date to tomorrow
     const tomorrow = new Date();
@@ -49,16 +55,32 @@ export class InitiateTaskComponent implements OnInit {
     this.taskForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
       description: ['', [Validators.maxLength(1000)]],
-      taskProviderName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+      donorId: [null, [Validators.required]],
       validatedBudget: [null, [Validators.min(0)]],
       deadline: ['', [Validators.required, this.futureDateValidator.bind(this)]]
     });
   }
 
   ngOnInit(): void {
+    this.loadDonors();
     if (this.readonlyMode) {
       this.taskForm.disable();
     }
+  }
+
+  loadDonors(): void {
+    this.isLoadingDonors = true;
+    this.donorService.getAllDonors().subscribe({
+      next: (donors) => {
+        this.donors = donors;
+        this.isLoadingDonors = false;
+      },
+      error: (error) => {
+        console.error('Error loading donors:', error);
+        this.errorMessage = 'Failed to load donors. Please refresh the page.';
+        this.isLoadingDonors = false;
+      }
+    });
   }
 
   futureDateValidator(control: any) {
@@ -92,8 +114,8 @@ export class InitiateTaskComponent implements OnInit {
 
     const formData: TaskRequestDto = {
       title: this.taskForm.value.title.trim(),
+      donorId: this.taskForm.value.donorId,
       description: this.taskForm.value.description?.trim() || undefined,
-      taskProviderName: this.taskForm.value.taskProviderName.trim(),
       validatedBudget: this.taskForm.value.validatedBudget || undefined,
       deadline: this.taskForm.value.deadline ? new Date(this.taskForm.value.deadline).toISOString() : undefined
     };

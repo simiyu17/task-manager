@@ -13,3 +13,5 @@ databaseChangeLog:
       file: db/changelog/changes/006-add-clarifying-questions-table.yaml
   - include:
       file: db/changelog/changes/007-add-donors-table.yaml
+  - include:
+      file: db/changelog/changes/008-replace-task-provider-name-with-donor-id.yaml

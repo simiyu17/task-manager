@@ -1,5 +1,6 @@
 package com.task.manage.task.dto;
 
+import com.task.manage.donor.dto.DonorResponseDto;
 import com.task.manage.partner.dto.PartnerResponseDto;
 
 import java.math.BigDecimal;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 public record TaskResponseDto(
         Long id,
         String title,
-        String taskProviderName,
+        DonorResponseDto donor,
         String description,
         PartnerResponseDto assignedPartner,
         String taskStatus,

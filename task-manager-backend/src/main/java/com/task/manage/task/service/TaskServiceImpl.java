@@ -1,5 +1,8 @@
 package com.task.manage.task.service;
 
+import com.task.manage.donor.domain.Donor;
+import com.task.manage.donor.domain.DonorRepository;
+import com.task.manage.donor.exception.DonorNotFoundException;
 import com.task.manage.partner.domain.Partner;
 import com.task.manage.partner.domain.PartnerRepository;
 import com.task.manage.partner.exception.PartnerNotFoundException;
@@ -28,6 +31,7 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
     private final PartnerRepository partnerRepository;
+    private final DonorRepository donorRepository;
     private final TaskMapper taskMapper;
 
     @Override
@@ -41,6 +45,11 @@ public class TaskServiceImpl implements TaskService {
 
         // Create task entity
         Task task = taskMapper.toEntity(requestDto);
+
+        // Assign donor (mandatory)
+        Donor donor = donorRepository.findById(requestDto.donorId())
+                .orElseThrow(() -> new DonorNotFoundException(requestDto.donorId()));
+        task.setDonor(donor);
 
         // Assign partner if partnerId is provided
         if (requestDto.assignedPartnerId() != null) {
@@ -72,6 +81,13 @@ public class TaskServiceImpl implements TaskService {
 
         // Update task fields
         taskMapper.updateEntityFromDto(requestDto, existingTask);
+
+        // Update donor if donorId is provided
+        if (requestDto.donorId() != null) {
+            Donor donor = donorRepository.findById(requestDto.donorId())
+                    .orElseThrow(() -> new DonorNotFoundException(requestDto.donorId()));
+            existingTask.setDonor(donor);
+        }
 
         // Update partner if partnerId is provided
         if (requestDto.assignedPartnerId() != null) {

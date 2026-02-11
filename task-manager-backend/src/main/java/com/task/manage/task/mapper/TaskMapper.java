@@ -1,5 +1,7 @@
 package com.task.manage.task.mapper;
 
+import com.task.manage.donor.domain.Donor;
+import com.task.manage.donor.mapper.DonorMapper;
 import com.task.manage.partner.domain.Partner;
 import com.task.manage.partner.mapper.PartnerMapper;
 import com.task.manage.task.domain.Task;
@@ -13,15 +15,17 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(
         componentModel = "spring",
-        uses = {PartnerMapper.class},
+        uses = {PartnerMapper.class, DonorMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface TaskMapper {
 
+    @Mapping(target = "donor", source = "donor")
     @Mapping(target = "assignedPartner", source = "assignedPartner")
     @Mapping(target = "taskStatus", expression = "java(taskStatusToString(task.getTaskStatus()))")
     TaskResponseDto toResponseDto(Task task);
 
+    @Mapping(target = "donor", ignore = true)
     @Mapping(target = "assignedPartner", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dateCreated", ignore = true)
@@ -33,6 +37,7 @@ public interface TaskMapper {
     @Mapping(target = "requestReceivedAt", expression = "java(java.time.LocalDateTime.now())")
     Task toEntity(TaskRequestDto requestDto);
 
+    @Mapping(target = "donor", ignore = true)
     @Mapping(target = "assignedPartner", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dateCreated", ignore = true)
@@ -50,6 +55,15 @@ public interface TaskMapper {
         Partner partner = new Partner();
         partner.setId(partnerId);
         return partner;
+    }
+
+    default Donor mapDonorFromId(Long donorId) {
+        if (donorId == null) {
+            return null;
+        }
+        Donor donor = new Donor();
+        donor.setId(donorId);
+        return donor;
     }
 
     default String taskStatusToString(TaskStatus taskStatus) {

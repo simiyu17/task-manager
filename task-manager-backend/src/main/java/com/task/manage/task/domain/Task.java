@@ -1,6 +1,7 @@
 package com.task.manage.task.domain;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.task.manage.donor.domain.Donor;
 import com.task.manage.partner.domain.Partner;
 import com.task.manage.shared.domain.BaseEntity;
 import jakarta.persistence.Column;
@@ -28,8 +29,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Task extends BaseEntity {
 
-    @Column(name = "task_provider_name")
-    private String taskProviderName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "donor_id")
+    private Donor donor;
 
     @Column(name = "title")
     private String title;
@@ -66,7 +68,7 @@ public class Task extends BaseEntity {
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
                 .append(title, task.title)
-                .append(taskProviderName, task.taskProviderName)
+                .append(donor, task.donor)
                 .isEquals();
     }
 
@@ -75,7 +77,7 @@ public class Task extends BaseEntity {
         return new HashCodeBuilder(17, 37)
                 .appendSuper(super.hashCode())
                 .append(title)
-                .append(taskProviderName)
+                .append(donor)
                 .toHashCode();
     }
 
