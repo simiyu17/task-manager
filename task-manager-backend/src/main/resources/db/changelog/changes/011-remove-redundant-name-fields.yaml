@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: 011-remove-redundant-name-fields-from-comments-and-questions
+      author: system
+      changes:
+        # Drop columns from review_comments table
+        - dropColumn:
+            tableName: review_comments
+            columnName: commenter_name
+
+        # Drop columns from clarifying_questions table
+        - dropColumn:
+            tableName: clarifying_questions
+            columnName: questioner_name
+
+        - dropColumn:
+            tableName: clarifying_questions
+            columnName: answered_by
+
+      rollback:
+        # Restore commenter_name column
+        - addColumn:
+            tableName: review_comments
+            columns:
+              - column:
+                  name: commenter_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+
+        # Restore questioner_name and answered_by columns
+        - addColumn:
+            tableName: clarifying_questions
+            columns:
+              - column:
+                  name: questioner_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: answered_by
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+

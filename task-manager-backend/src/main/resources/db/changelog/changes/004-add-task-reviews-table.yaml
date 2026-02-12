@@ -3,6 +3,7 @@ databaseChangeLog:
       id: 004-add-task-reviews-table
       author: system
       changes:
+
         - createTable:
             tableName: task_reviews
             columns:
@@ -57,3 +58,5 @@ databaseChangeLog:
               - column:
                   name: data_status
                   type: VARCHAR(50)
+
+

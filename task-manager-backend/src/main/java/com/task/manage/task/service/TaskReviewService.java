@@ -51,8 +51,6 @@ public class TaskReviewService {
         // Create review
         TaskReview review = TaskReview.builder()
                 .task(task)
-                .reviewerName(requestDto.reviewerName())
-                .reviewerEmail(requestDto.reviewerEmail())
                 .reviewStatus(reviewStatus)
                 .reviewCycle(reviewCycle)
                 .reviewedAt(LocalDateTime.now())
@@ -106,7 +104,6 @@ public class TaskReviewService {
         ReviewComment comment = ReviewComment.builder()
                 .taskReview(review)
                 .commentText(requestDto.commentText())
-                .commenterName(requestDto.commenterName())
                 .sectionReference(requestDto.sectionReference())
                 .build();
 
@@ -135,7 +132,6 @@ public class TaskReviewService {
         ClarifyingQuestion question = ClarifyingQuestion.builder()
                 .taskReview(review)
                 .questionText(requestDto.questionText())
-                .questionerName(requestDto.questionerName())
                 .isAnswered(false)
                 .build();
 
@@ -152,7 +148,6 @@ public class TaskReviewService {
                 .orElseThrow(() -> new QuestionNotFoundException(questionId));
 
         question.setAnswerText(requestDto.answerText());
-        question.setAnsweredBy(requestDto.answeredBy());
         question.setAnswered(true);
 
         ClarifyingQuestion updatedQuestion = clarifyingQuestionRepository.save(question);
@@ -200,12 +195,11 @@ public class TaskReviewService {
         return new TaskReviewResponseDto(
                 baseDto.id(),
                 baseDto.taskId(),
-                baseDto.reviewerName(),
-                baseDto.reviewerEmail(),
                 baseDto.reviewStatus(),
                 baseDto.reviewCycle(),
                 baseDto.reviewedAt(),
                 baseDto.overallComment(),
+                baseDto.createdBy(),
                 comments,
                 questions
         );

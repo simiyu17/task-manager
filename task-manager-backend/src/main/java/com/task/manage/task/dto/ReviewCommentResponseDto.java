@@ -4,7 +4,7 @@ public record ReviewCommentResponseDto(
         Long id,
         Long taskReviewId,
         String commentText,
-        String commenterName,
-        String sectionReference
+        String sectionReference,
+        String createdBy
 ) {
 }

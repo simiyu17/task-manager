@@ -10,8 +10,6 @@ public record ReviewCommentRequestDto(
         @NotBlank(message = "Comment text is required")
         String commentText,
 
-        @NotBlank(message = "Commenter name is required")
-        String commenterName,
 
         String sectionReference
 ) {

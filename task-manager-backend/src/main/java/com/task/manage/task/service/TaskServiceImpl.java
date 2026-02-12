@@ -222,6 +222,7 @@ public class TaskServiceImpl implements TaskService {
             case CN_APPROVED -> TaskStatus.INCEPTION_REPORT_PENDING;
             case INCEPTION_REPORT_PENDING -> TaskStatus.EXECUTION;
             case EXECUTION -> TaskStatus.COMPLETED;
+            case TASK_UNDER_REVIEW -> TaskStatus.TASK_UNDER_REVIEW; // Stay in same status
             case COMPLETED -> null; // Final status
         };
     }

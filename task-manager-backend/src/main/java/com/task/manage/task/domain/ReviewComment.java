@@ -22,9 +22,6 @@ public class ReviewComment extends BaseEntity {
     @Column(name = "comment_text", columnDefinition = "TEXT", nullable = false)
     private String commentText;
 
-    @Column(name = "commenter_name", nullable = false)
-    private String commenterName;
-
     @Column(name = "section_reference")
     private String sectionReference;
 
@@ -38,7 +35,6 @@ public class ReviewComment extends BaseEntity {
                 .appendSuper(super.equals(o))
                 .append(taskReview, that.taskReview)
                 .append(commentText, that.commentText)
-                .append(commenterName, that.commenterName)
                 .isEquals();
     }
 
@@ -48,7 +44,6 @@ public class ReviewComment extends BaseEntity {
                 .appendSuper(super.hashCode())
                 .append(taskReview)
                 .append(commentText)
-                .append(commenterName)
                 .toHashCode();
     }
 }

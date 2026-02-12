@@ -22,14 +22,8 @@ public class ClarifyingQuestion extends BaseEntity {
     @Column(name = "question_text", columnDefinition = "TEXT", nullable = false)
     private String questionText;
 
-    @Column(name = "questioner_name", nullable = false)
-    private String questionerName;
-
     @Column(name = "answer_text", columnDefinition = "TEXT")
     private String answerText;
-
-    @Column(name = "answered_by")
-    private String answeredBy;
 
     @Column(name = "is_answered")
     private boolean isAnswered;
@@ -44,7 +38,6 @@ public class ClarifyingQuestion extends BaseEntity {
                 .appendSuper(super.equals(o))
                 .append(taskReview, that.taskReview)
                 .append(questionText, that.questionText)
-                .append(questionerName, that.questionerName)
                 .isEquals();
     }
 
@@ -54,7 +47,6 @@ public class ClarifyingQuestion extends BaseEntity {
                 .appendSuper(super.hashCode())
                 .append(taskReview)
                 .append(questionText)
-                .append(questionerName)
                 .toHashCode();
     }
 }

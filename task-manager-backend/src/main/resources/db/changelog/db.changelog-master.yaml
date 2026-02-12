@@ -15,3 +15,9 @@ databaseChangeLog:
       file: db/changelog/changes/007-add-donors-table.yaml
   - include:
       file: db/changelog/changes/008-replace-task-provider-name-with-donor-id.yaml
+  - include:
+      file: db/changelog/changes/009-remove-reviewer-fields-from-task-reviews.yaml
+  - include:
+      file: db/changelog/changes/010-add-missing-sequences-for-reviews-comments-questions.yaml
+  - include:
+      file: db/changelog/changes/011-remove-redundant-name-fields.yaml

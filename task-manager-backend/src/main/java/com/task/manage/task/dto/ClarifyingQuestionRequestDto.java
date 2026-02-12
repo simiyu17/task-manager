@@ -8,9 +8,6 @@ public record ClarifyingQuestionRequestDto(
         Long taskReviewId,
 
         @NotBlank(message = "Question text is required")
-        String questionText,
-
-        @NotBlank(message = "Questioner name is required")
-        String questionerName
+        String questionText
 ) {
 }

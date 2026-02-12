@@ -22,11 +22,6 @@ public class TaskReview extends BaseEntity {
     @JoinColumn(name = "task_id", nullable = false)
     private Task task;
 
-    @Column(name = "reviewer_name", nullable = false)
-    private String reviewerName;
-
-    @Column(name = "reviewer_email")
-    private String reviewerEmail;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "review_status", nullable = false)
@@ -51,7 +46,6 @@ public class TaskReview extends BaseEntity {
                 .appendSuper(super.equals(o))
                 .append(task, that.task)
                 .append(reviewCycle, that.reviewCycle)
-                .append(reviewerName, that.reviewerName)
                 .isEquals();
     }
 
@@ -61,7 +55,6 @@ public class TaskReview extends BaseEntity {
                 .appendSuper(super.hashCode())
                 .append(task)
                 .append(reviewCycle)
-                .append(reviewerName)
                 .toHashCode();
     }
 
