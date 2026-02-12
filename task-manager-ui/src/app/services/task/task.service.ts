@@ -4,18 +4,6 @@ import { ApiService } from '../api.service';
 import { TaskRequestDto } from '../../views/base/tasks/dto/task-request-dto';
 import { DonorResponseDto } from '../donor/donor.service';
 
-export interface Task {
-  id: string;
-  title: string;
-  description?: string;
-  taskProviderName: string;
-  validatedBudget?: number;
-  deadline?: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface TaskResponse {
   id: number;
   title: string;

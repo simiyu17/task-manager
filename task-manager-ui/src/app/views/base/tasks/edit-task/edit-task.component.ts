@@ -58,7 +58,7 @@ export class EditTaskComponent implements OnInit {
         form.patchValue({
           title: this.task.title,
           description: this.task.description,
-          taskProviderName: this.task.taskProviderName,
+          donorId: this.task.donor?.id,
           validatedBudget: this.task.validatedBudget,
           deadline: this.task.deadline ? this.task.deadline.split('T')[0] : null
         });
