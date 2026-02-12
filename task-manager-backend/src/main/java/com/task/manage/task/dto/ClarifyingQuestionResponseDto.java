@@ -5,6 +5,7 @@ public record ClarifyingQuestionResponseDto(
         Long taskReviewId,
         String questionText,
         String answerText,
+        String answeredBy,
         boolean isAnswered,
         String createdBy
 ) {

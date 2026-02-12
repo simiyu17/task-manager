@@ -17,6 +17,7 @@ export interface ClarifyingQuestionResponseDto {
   taskReviewId: number;
   questionText: string;
   answerText?: string;
+  answeredBy?: string;
   isAnswered: boolean;
   createdBy: string;
 }
@@ -50,6 +51,7 @@ export interface ClarifyingQuestionRequestDto {
 
 export interface AnswerQuestionRequestDto {
   answerText: string;
+  answeredBy: string;
 }
 
 export enum ReviewStatus {

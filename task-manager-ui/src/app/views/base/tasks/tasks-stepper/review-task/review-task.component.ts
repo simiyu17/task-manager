@@ -216,7 +216,7 @@ export class ReviewTaskComponent implements OnInit {
   toggleAnswerForm(questionId: number): void {
     this.showAnswerForm[questionId] = !this.showAnswerForm[questionId];
     if (!this.showAnswerForm[questionId]) {
-      this.answerForm.reset();
+      this.answerForm.reset({ answeredBy: this.createdBy });
     }
     this.selectedQuestionId = questionId;
   }
@@ -228,13 +228,14 @@ export class ReviewTaskComponent implements OnInit {
     }
 
     const answerRequest: AnswerQuestionRequestDto = {
-      answerText: this.answerForm.value.answerText
+      answerText: this.answerForm.value.answerText,
+      answeredBy: this.answerForm.value.answeredBy
     };
 
     this.reviewService.answerQuestion(questionId, answerRequest).subscribe({
       next: () => {
         this.loadReviews();
-        this.answerForm.reset();
+        this.answerForm.reset({ answeredBy: this.createdBy });
         this.showAnswerForm[questionId] = false;
       },
       error: (error) => {

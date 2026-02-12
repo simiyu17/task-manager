@@ -220,7 +220,8 @@
                         
                         @if (question.isAnswered) {
                           <div class="answer-section mt-2 p-2 bg-light rounded">
-                            <p class="mb-0"><strong>A:</strong> {{ question.answerText }}</p>
+                            <p class="mb-1"><strong>A:</strong> {{ question.answerText }}</p>
+                            <small class="text-muted">Answered by: {{ question.answeredBy }}</small>
                           </div>
                         } @else {
                           @if (!showAnswerForm[question.id]) {

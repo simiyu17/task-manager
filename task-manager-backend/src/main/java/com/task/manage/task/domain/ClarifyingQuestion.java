@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.springframework.data.annotation.LastModifiedBy;
 
 @Entity
 @Table(name = "clarifying_questions")
@@ -24,6 +25,10 @@ public class ClarifyingQuestion extends BaseEntity {
 
     @Column(name = "answer_text", columnDefinition = "TEXT")
     private String answerText;
+
+    @LastModifiedBy
+    @Column(name = "answered_by")
+    private String answeredBy;
 
     @Column(name = "is_answered")
     private boolean isAnswered;
