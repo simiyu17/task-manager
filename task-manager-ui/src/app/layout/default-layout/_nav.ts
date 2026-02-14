@@ -15,16 +15,10 @@ export const navItems: INavData[] = [
     url: '/base/donors',
     iconComponent: { name: 'cil-drop' }
   },
-   {
-    name: 'Email Settings',
-    url: '/base/coming-soon',
-    iconComponent: { name: 'cil-drop' }
-  },
   {
-    name: 'Notifications',
-    url: '/base/coming-soon',
-    linkProps: { fragment: 'headings' },
-    iconComponent: { name: 'cil-pencil' }
+    name: 'Partners',
+    url: '/base/partners',
+    iconComponent: { name: 'cil-people' }
   },
   {
     name: 'Core',
@@ -39,15 +33,16 @@ export const navItems: INavData[] = [
     title: true,
     name: 'Administration'
   },
-  {
-    name: 'Users',
+   {
+    name: 'Email Settings',
     url: '/base/coming-soon',
-    iconComponent: { name: 'cil-star' }
+    iconComponent: { name: 'cil-drop' }
   },
   {
-    name: 'User Roles',
+    name: 'Notifications',
     url: '/base/coming-soon',
-    iconComponent: { name: 'cil-star' }
+    linkProps: { fragment: 'headings' },
+    iconComponent: { name: 'cil-pencil' }
   },
   {
     name: 'Audit Trails',

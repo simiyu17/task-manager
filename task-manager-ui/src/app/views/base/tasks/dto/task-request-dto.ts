@@ -7,4 +7,7 @@ export interface TaskRequestDto {
   requestReceivedAt?: string; // ISO 8601 format
   acceptedAt?: string; // ISO 8601 format
   deadline?: string; // ISO 8601 format
+  allocateNotes?: string;
+  acceptanceNotes?: string;
+  rejectionNotes?: string;
 }

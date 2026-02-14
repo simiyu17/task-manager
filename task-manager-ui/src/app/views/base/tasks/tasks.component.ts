@@ -13,19 +13,8 @@ import {
   PageLinkDirective,
   PaginationComponent
 } from '@coreui/angular';
-import { TasksStepperComponent } from './tasks-stepper/tasks-stepper.component';
 import { TaskService, TaskResponse } from '../../../services/task/task.service';
 import { AuthService } from '../../../services/users/auth.service';
-
-interface Task {
-  id: number;
-  taskName: string;
-  assignedTo: string;
-  priority: string;
-  status: string;
-  dueDate: string;
-  progress: number;
-}
 
 @Component({
   selector: 'app-tasks',
@@ -48,8 +37,8 @@ interface Task {
   styleUrl: './tasks.component.scss',
 })
 export class TasksComponent implements OnInit {
-  tasks: Task[] = [];
-  paginatedTasks: Task[] = [];
+  tasks: TaskResponse[] = [];
+  paginatedTasks: TaskResponse[] = [];
   currentPage = 1;
   itemsPerPage = 10;
   totalPages = 0;
@@ -73,12 +62,9 @@ export class TasksComponent implements OnInit {
     this.taskService.getAllTasks().subscribe({
       next: (response: TaskResponse[]) => {
         this.tasks = response.map(task => ({
-          id: task.id,
-          taskName: task.title,
-          assignedTo: task.assignedPartner?.name || 'Unassigned',
+          ...task,
           priority: this.calculatePriority(),
-          status: this.mapTaskStatus(task.taskStatus),
-          dueDate: task.deadline ? this.formatDate(task.deadline) : 'No deadline',
+          taskStatus: this.mapTaskStatus(task.taskStatus),
           progress: this.calculateProgress()
         }));
         this.updatePagination();
@@ -154,18 +140,18 @@ export class TasksComponent implements OnInit {
     }
   }
 
-  onEdit(task: Task): void {
+  onEdit(task: TaskResponse): void {
     this.router.navigate(['/base/tasks', task.id, 'edit']);
   }
 
-  onDelete(task: Task): void {
+  onDelete(task: TaskResponse): void {
     console.log('Delete task:', task);
     // Implement delete logic
     this.tasks = this.tasks.filter(t => t.id !== task.id);
     this.updatePagination();
   }
 
-  onView(task: Task): void {
+  onView(task: TaskResponse): void {
     this.router.navigate(['/base/tasks', task.id, 'view']);
   }
 }

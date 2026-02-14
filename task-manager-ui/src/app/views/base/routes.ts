@@ -86,6 +86,38 @@ export const routes: Routes = [
         }
       },
       {
+        path: 'partners',
+        loadComponent: () => import('./partner/partners.component').then(m => m.PartnersComponent),
+        canActivate: [AuthGuard],
+        data: {
+          title: 'Partners'
+        }
+      },
+      {
+        path: 'partners/create',
+        loadComponent: () => import('./partner/create-partner/create-partner.component').then(m => m.CreatePartnerComponent),
+        canActivate: [AuthGuard],
+        data: {
+          title: 'Create Partner'
+        }
+      },
+      {
+        path: 'partners/:id/view',
+        loadComponent: () => import('./partner/view-partner/view-partner.component').then(m => m.ViewPartnerComponent),
+        canActivate: [AuthGuard],
+        data: {
+          title: 'View Partner'
+        }
+      },
+      {
+        path: 'partners/:id/edit',
+        loadComponent: () => import('./partner/edit-partner/edit-partner.component').then(m => m.EditPartnerComponent),
+        canActivate: [AuthGuard],
+        data: {
+          title: 'Edit Partner'
+        }
+      },
+      {
         path: 'accordion',
         loadComponent: () => import('./accordion/accordions.component').then(m => m.AccordionsComponent),
         data: {

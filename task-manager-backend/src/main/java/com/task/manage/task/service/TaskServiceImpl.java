@@ -38,6 +38,10 @@ public class TaskServiceImpl implements TaskService {
     public TaskResponseDto createTask(TaskRequestDto requestDto) {
         log.info("Creating task with title: {}", requestDto.title());
 
+        if (null == requestDto.donorId() || null == requestDto.title() || requestDto.title().isBlank()) {
+            throw new IllegalArgumentException("Donor ID and title are required to create a task");
+        }
+
         // Check if task with the same title already exists
         if (taskRepository.existsByTitle(requestDto.title())) {
             throw new TaskAlreadyExistsException("Task already exists with title: " + requestDto.title());
@@ -213,7 +217,9 @@ public class TaskServiceImpl implements TaskService {
 
     private TaskStatus getNextStatus(TaskStatus currentStatus) {
         return switch (currentStatus) {
-            case INITIATED -> TaskStatus.ALLOCATED;
+            case INITIATED -> TaskStatus.TASK_UNDER_REVIEW;
+            case TASK_UNDER_REVIEW -> TaskStatus.REVIEW_COMPLETED;
+            case REVIEW_COMPLETED -> TaskStatus.ALLOCATED;
             case ALLOCATED -> TaskStatus.ACCEPTED;
             case ACCEPTED -> TaskStatus.WBS_SUBMITTED;
             case WBS_SUBMITTED -> TaskStatus.CN_DRAFTING;
@@ -222,7 +228,6 @@ public class TaskServiceImpl implements TaskService {
             case CN_APPROVED -> TaskStatus.INCEPTION_REPORT_PENDING;
             case INCEPTION_REPORT_PENDING -> TaskStatus.EXECUTION;
             case EXECUTION -> TaskStatus.COMPLETED;
-            case TASK_UNDER_REVIEW -> TaskStatus.TASK_UNDER_REVIEW; // Stay in same status
             case COMPLETED -> null; // Final status
         };
     }

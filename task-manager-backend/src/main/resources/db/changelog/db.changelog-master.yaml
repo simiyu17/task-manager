@@ -21,3 +21,5 @@ databaseChangeLog:
       file: db/changelog/changes/010-add-missing-sequences-for-reviews-comments-questions.yaml
   - include:
       file: db/changelog/changes/011-remove-redundant-name-fields.yaml
+  - include:
+      file: db/changelog/changes/012-add-notes-columns-to-tasks.yaml

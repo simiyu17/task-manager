@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   ColComponent,
@@ -30,8 +31,9 @@ import { DonorService, DonorResponseDto } from '../../../../../services/donor/do
   styleUrl: './initiate-task.component.scss'
 })
 export class InitiateTaskComponent implements OnInit {
-  @Input() taskId?: string; // If provided, component is in edit mode
+  taskId?: string; // Task ID from route or parent - if provided, component is in edit mode
   @Input() readonlyMode: boolean = false; // If true, form is readonly
+  @Input() initialFormData?: TaskRequestDto; // Initial form data to populate
   @Output() taskCreated = new EventEmitter<{ success: boolean; taskId?: string; data?: TaskRequestDto }>();
 
   taskForm: FormGroup;
@@ -45,7 +47,8 @@ export class InitiateTaskComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private taskService: TaskService,
-    private donorService: DonorService
+    private donorService: DonorService,
+    private route: ActivatedRoute
   ) {
     // Set minimum date to tomorrow
     const tomorrow = new Date();
@@ -62,6 +65,24 @@ export class InitiateTaskComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Get taskId from route params if available
+    this.route.params.subscribe(params => {
+      if (params['id'] || params['taskId']) {
+        this.taskId = params['id'] || params['taskId'];
+      }
+    });
+    
+    // Populate form with initial data if provided
+    if (this.initialFormData) {
+      this.taskForm.patchValue({
+        title: this.initialFormData.title || '',
+        description: this.initialFormData.description || '',
+        donorId: this.initialFormData.donorId || null,
+        validatedBudget: this.initialFormData.validatedBudget || null,
+        deadline: this.initialFormData.deadline ? new Date(this.initialFormData.deadline).toISOString().split('T')[0] : ''
+      });
+    }
+    
     this.loadDonors();
     if (this.readonlyMode) {
       this.taskForm.disable();
@@ -133,7 +154,7 @@ export class InitiateTaskComponent implements OnInit {
       error: (error) => {
         this.isSubmitting = false;
         this.errorMessage = error.error?.message || `Failed to ${this.taskId ? 'update' : 'create'} task. Please try again.`;
-        this.taskCreated.emit({ success: false });
+        this.taskCreated.emit({ success: false, data: formData }); // Emit data even on failure to preserve form
       }
     });
   }

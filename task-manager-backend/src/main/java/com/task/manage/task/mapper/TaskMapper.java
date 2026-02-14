@@ -46,6 +46,9 @@ public interface TaskMapper {
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "dataStatus", ignore = true)
     @Mapping(target = "taskStatus", ignore = true)
+    @Mapping(target = "allocateNotes", source = "allocateNotes")
+    @Mapping(target = "acceptanceNotes", source = "acceptanceNotes")
+    @Mapping(target = "rejectionNotes", source = "rejectionNotes")
     void updateEntityFromDto(TaskRequestDto requestDto, @MappingTarget Task task);
 
     default Partner mapPartnerFromId(Long partnerId) {

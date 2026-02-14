@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   ColComponent,
   RowComponent,
-  FormControlDirective,
   FormDirective,
   FormFeedbackComponent,
   FormSelectDirective
@@ -25,15 +25,15 @@ interface DocumentType {
     RowComponent,
     ColComponent,
     FormDirective,
-    FormControlDirective,
     FormFeedbackComponent,
     FormSelectDirective
   ],
   templateUrl: './upload-task-document.component.html',
   styleUrl: './upload-task-document.component.scss'
 })
-export class UploadTaskDocumentComponent {
+export class UploadTaskDocumentComponent implements OnInit {
   @Input() taskId: string = '';
+  @Input() createMode: boolean = true;
   @Output() documentUploaded = new EventEmitter<{ success: boolean; message?: string }>();
 
   uploadForm: FormGroup;
@@ -55,12 +55,22 @@ export class UploadTaskDocumentComponent {
 
   constructor(
     private fb: FormBuilder,
-    private documentService: DocumentService
+    private documentService: DocumentService,
+    private route: ActivatedRoute
   ) {
     this.uploadForm = this.fb.group({
       documentType: ['', [Validators.required]],
       file: [null, [Validators.required]]
     });
+  }
+
+  ngOnInit(): void {
+    // Get taskId from route when not in createMode
+    if (!this.createMode && !this.taskId) {
+      this.route.params.subscribe(params => {
+        this.taskId = params['id'] || params['taskId'] || '';
+      });
+    }
   }
 
   get f() {

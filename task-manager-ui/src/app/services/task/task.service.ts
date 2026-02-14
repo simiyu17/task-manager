@@ -19,11 +19,16 @@ export interface TaskResponse {
   lastModified: string;
   createdBy: string;
   lastModifiedBy: string;
+  allocateNotes?: string;
+  acceptanceNotes?: string;
+  rejectionNotes?: string;
+  progress?: number;
+  priority?: string;
 }
 
 export interface PartnerResponseDto {
 id: number;
-name: string;
+partnerName: string;
 // Add other partner fields as needed
 }
 
@@ -31,6 +36,35 @@ export interface DocumentUploadResponse {
 id: string;
   documentId: string;
   message: string;
+}
+
+export interface PagedTaskResponse {
+  content: TaskResponse[];
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    sort: {
+      empty: boolean;
+      sorted: boolean;
+      unsorted: boolean;
+    };
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  totalPages: number;
+  totalElements: number;
+  last: boolean;
+  size: number;
+  number: number;
+  sort: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+  };
+  numberOfElements: number;
+  first: boolean;
+  empty: boolean;
 }
 
 @Injectable({
@@ -102,6 +136,57 @@ export class TaskService {
     return this.apiService.post<TaskResponse>(
       `${this.TASKS_ENDPOINT}/${taskId}/draft`,
       draftData
+    );
+  }
+
+  /**
+   * Get all tasks with pagination
+   * @param page - Page number (0-indexed)
+   * @param size - Page size
+   * @param sort - Sort criteria (e.g., 'dateCreated,desc')
+   */
+  getAllTasksPaginated(page: number = 0, size: number = 10, sort: string = 'dateCreated'): Observable<PagedTaskResponse> {
+    const params = {
+      page: page.toString(),
+      size: size.toString(),
+      sort: sort
+    };
+    return this.apiService.get<PagedTaskResponse>(`${this.TASKS_ENDPOINT}/paginated`, { params });
+  }
+
+  /**
+   * Assign a partner to a task
+   * @param taskId - Task ID
+   * @param partnerId - Partner ID
+   */
+  assignPartnerToTask(taskId: string, partnerId: string): Observable<TaskResponse> {
+    return this.apiService.patch<TaskResponse>(
+      `${this.TASKS_ENDPOINT}/${taskId}/assign-partner/${partnerId}`,
+      null
+    );
+  }
+
+  /**
+   * Update task status
+   * @param taskId - Task ID
+   * @param status - New status
+   */
+  updateTaskStatus(taskId: string, status: string): Observable<TaskResponse> {
+    return this.apiService.patch<TaskResponse>(
+      `${this.TASKS_ENDPOINT}/${taskId}/status`,
+      null,
+      { params: { status } }
+    );
+  }
+
+  /**
+   * Move task to next status in workflow
+   * @param taskId - Task ID
+   */
+  moveTaskToNextStatus(taskId: string): Observable<TaskResponse> {
+    return this.apiService.patch<TaskResponse>(
+      `${this.TASKS_ENDPOINT}/${taskId}/next-status`,
+      null
     );
   }
 }

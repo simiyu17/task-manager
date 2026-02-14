@@ -59,6 +59,15 @@ public class Task extends BaseEntity {
     @Column(name = "deadline")
     private LocalDateTime deadline;
 
+    @Column(name = "allocate_notes", columnDefinition = "TEXT")
+    private String allocateNotes;
+
+    @Column(name = "acceptance_notes", columnDefinition = "TEXT")
+    private String acceptanceNotes;
+
+    @Column(name = "rejection_notes", columnDefinition = "TEXT")
+    private String rejectionNotes;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -84,7 +93,7 @@ public class Task extends BaseEntity {
 
     @Getter
     public enum TaskStatus {
-        INITIATED, TASK_UNDER_REVIEW, ALLOCATED, ACCEPTED, WBS_SUBMITTED,
+        INITIATED, TASK_UNDER_REVIEW, REVIEW_COMPLETED, ALLOCATED, ACCEPTED, WBS_SUBMITTED,
         CN_DRAFTING, CN_UNDER_REVIEW, CN_APPROVED,
         INCEPTION_REPORT_PENDING, EXECUTION, COMPLETED;
 

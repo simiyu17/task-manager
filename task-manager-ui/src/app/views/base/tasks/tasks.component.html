@@ -47,19 +47,19 @@
               @for (task of paginatedTasks; track task.id) {
                 <tr>
                   <th scope="row">{{ task.id }}</th>
-                  <td>{{ task.taskName }}</td>
-                  <td>{{ task.assignedTo }}</td>
+                  <td>{{ task.title }}</td>
+                  <td>{{ task.assignedPartner?.partnerName }}</td>
                   <td>
-                    <span class="badge" [ngClass]="'bg-' + getPriorityColor(task.priority)">
-                      {{ task.priority }}
+                    <span class="badge" [ngClass]="'bg-' + getPriorityColor(task.priority || 'Low')">
+                      {{ task.priority || 'Low' }}
                     </span>
                   </td>
                   <td>
-                    <span class="badge" [ngClass]="'bg-' + getStatusColor(task.status)">
-                      {{ task.status }}
+                    <span class="badge" [ngClass]="'bg-' + getStatusColor(task.taskStatus)">
+                      {{ task.taskStatus }}
                     </span>
                   </td>
-                  <td>{{ task.dueDate }}</td>
+                  <td>{{ task.deadline ? formatDate(task.deadline) : 'No deadline' }}</td>
                   <td>
                     <div class="d-flex align-items-center">
                       <div class="progress flex-grow-1 me-2" style="height: 8px; min-width: 60px;">

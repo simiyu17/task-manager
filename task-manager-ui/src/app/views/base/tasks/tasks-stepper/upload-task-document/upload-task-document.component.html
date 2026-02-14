@@ -1,7 +1,7 @@
 <div class="upload-document-content">
   <h4 class="mb-3">Upload Task Document</h4>
   <p class="text-body-secondary mb-4">
-    Upload supporting documents for task <strong>{{ taskId }}</strong>. Select a document type and choose a file to upload.
+    Upload supporting documents for the task. Select a document type and choose a file to upload.
   </p>
 
   @if (errorMessage) {
@@ -15,23 +15,9 @@
 
   <form cForm [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
     <c-row class="mb-3">
-      <c-col md="6">
-        <label cFormLabel for="taskId">Task ID</label>
-        <input
-          cFormControl
-          id="taskId"
-          type="text"
-          [value]="taskId"
-          disabled
-          readonly
-          class="form-control-plaintext bg-light"
-        />
-      </c-col>
-
-      <c-col md="6">
+      <c-col md="12">
         <label cFormLabel for="documentType">Document Type <span class="text-danger">*</span></label>
         <select
-          cFormControl
           cSelect
           id="documentType"
           formControlName="documentType"

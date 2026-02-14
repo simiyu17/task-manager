@@ -8,7 +8,6 @@
   <div *ngIf="!loading && task">
     <app-tasks-stepper 
       [createMode]="false"
-      [taskId]="taskId"
       [readonlyMode]="true"
       [updateProgressMode]="true"
       (taskCreated)="onProgressUpdated($event)"

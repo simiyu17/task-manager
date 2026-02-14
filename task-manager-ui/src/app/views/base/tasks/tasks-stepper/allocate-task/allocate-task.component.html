@@ -1,0 +1,108 @@
+<c-row>
+  <c-col xs="12">
+    <div class="allocate-task-container">
+      <h4 class="mb-4">Task Allocation</h4>
+      <p class="text-body-secondary mb-4">
+        Assign a partner to the task and provide any relevant allocation notes.
+      </p>
+
+      <!-- Success Message -->
+      @if (successMessage) {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle me-2" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+            <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+          </svg>
+          {{ successMessage }}
+        </div>
+      }
+
+      <!-- Error Message -->
+      @if (errorMessage) {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle me-2" viewBox="0 0 16 16">
+            <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z"/>
+            <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+          </svg>
+          {{ errorMessage }}
+        </div>
+      }
+
+      <!-- Info Message for ALLOCATED status -->
+      @if (taskStatus === 'ALLOCATED') {
+        <div class="alert alert-info" role="alert">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle me-2" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533z"/>
+            <circle cx="8" cy="4.5" r="1"/>
+          </svg>
+          <strong>Task Already Allocated:</strong> This task has been allocated. The allocation details are shown below and cannot be modified.
+        </div>
+      }
+
+      <!-- Form -->
+      <form cForm [formGroup]="allocateForm" (ngSubmit)="onSubmit()">
+        <c-row class="mb-3">
+          <c-col md="6">
+            <label cLabel for="assignedPartnerId">Assigned Partner <span class="text-danger">*</span></label>
+            <select 
+              cSelect
+              id="assignedPartnerId"
+              formControlName="assignedPartnerId"
+              [class.is-invalid]="f['assignedPartnerId'].invalid && f['assignedPartnerId'].touched"
+              [class.is-valid]="f['assignedPartnerId'].valid && f['assignedPartnerId'].touched"
+              [disabled]="isLoadingPartners">
+              <option [ngValue]="null" disabled>
+                {{ isLoadingPartners ? 'Loading partners...' : 'Select a partner' }}
+              </option>
+              @for (partner of partners; track partner.id) {
+                <option [ngValue]="partner.id">{{ partner.partnerName }}</option>
+              }
+            </select>
+            <c-form-feedback *ngIf="f['assignedPartnerId'].invalid && f['assignedPartnerId'].touched" [valid]="false">
+              Please select a partner
+            </c-form-feedback>
+          </c-col>
+        </c-row>
+
+        <c-row class="mb-3">
+          <c-col md="12">
+            <label cLabel for="allocateNotes">Allocation Notes</label>
+            <textarea 
+              cFormControl
+              id="allocateNotes"
+              formControlName="allocateNotes"
+              rows="5"
+              placeholder="Enter any notes regarding this allocation (optional)"
+              [class.is-invalid]="f['allocateNotes'].invalid && f['allocateNotes'].touched"
+              [class.is-valid]="f['allocateNotes'].valid && f['allocateNotes'].touched">
+            </textarea>
+            <c-form-feedback *ngIf="f['allocateNotes'].invalid && f['allocateNotes'].touched" [valid]="false">
+              <span *ngIf="f['allocateNotes'].errors?.['maxlength']">
+                Allocation notes cannot exceed 2000 characters
+              </span>
+            </c-form-feedback>
+            <small class="text-muted">
+              {{ f['allocateNotes'].value?.length || 0 }} / 2000 characters
+            </small>
+          </c-col>
+        </c-row>
+
+        @if (taskStatus !== 'ALLOCATED') {
+          <c-row class="mt-4">
+            <c-col>
+              <button 
+                type="submit" 
+                cButton 
+                color="primary"
+                [disabled]="isSubmitting || allocateForm.invalid">
+                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                {{ isSubmitting ? 'Saving...' : 'Save Step' }}
+              </button>
+            </c-col>
+          </c-row>
+        }
+      </form>
+    </div>
+  </c-col>
+</c-row>
