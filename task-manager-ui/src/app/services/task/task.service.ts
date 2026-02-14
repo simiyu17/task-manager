@@ -27,9 +27,8 @@ export interface TaskResponse {
 }
 
 export interface PartnerResponseDto {
-id: number;
-partnerName: string;
-// Add other partner fields as needed
+  id: number;
+  partnerName: string;
 }
 
 export interface DocumentUploadResponse {
