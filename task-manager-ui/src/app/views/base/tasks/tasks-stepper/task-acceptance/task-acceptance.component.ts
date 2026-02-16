@@ -131,6 +131,7 @@ export class TaskAcceptanceComponent implements OnInit {
     const decision = this.acceptanceForm.get('decision')?.value;
     const notes = this.acceptanceForm.get('notes')?.value;
     const isAccepted = decision === 'accept';
+    const newStatus = isAccepted ? 'ACCEPTED' : 'REJECTED';
 
     // Step 1: Update task with acceptance or rejection notes
     const updateData = isAccepted 
@@ -139,25 +140,26 @@ export class TaskAcceptanceComponent implements OnInit {
 
     this.taskService.updateTask(this.taskId, updateData).subscribe({
       next: () => {
-        // Step 2: Move task to next status
-        this.taskService.moveTaskToNextStatus(this.taskId!, !isAccepted).subscribe({
+        // Step 2: Update task status
+        this.taskService.updateTaskStatus(this.taskId!, newStatus).subscribe({
           next: () => {
             this.successMessage = isAccepted 
               ? 'Task accepted successfully and moved to next status!'
-              : 'Task rejected and moved to previous status for review.';
+              : 'Task rejected and status updated.';
             this.isSubmitting = false;
             
-            // Emit success event to parent
+            // Emit success event to parent with status
             this.stepSaved.emit({ 
               success: true, 
-              message: this.successMessage 
-            });
+              message: this.successMessage,
+              status: newStatus
+            } as any);
 
             // Disable form after successful submission
             this.acceptanceForm.disable();
           },
           error: (error) => {
-            console.error('Error moving task to next status:', error);
+            console.error('Error updating task status:', error);
             this.errorMessage = 'Failed to update task status. Please try again.';
             this.isSubmitting = false;
             

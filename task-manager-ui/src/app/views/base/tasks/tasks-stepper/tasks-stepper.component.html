@@ -268,7 +268,7 @@
                     color="primary"
                     variant="outline"
                     [disabled]="isSubmitting"
-                    (click)="moveToNextStatus()">
+                    (click)="moveToNextStatus(getNextStatusForCurrentStep())">
                     @if (isSubmitting) {
                       <c-spinner size="sm" class="me-2"></c-spinner>
                     }
@@ -312,7 +312,7 @@
                     color="warning"
                     variant="outline"
                     [disabled]="isSubmitting"
-                    (click)="moveToNextStatus()">
+                    (click)="moveToNextStatus(getNextStatusForCurrentStep())">
                     @if (isSubmitting) {
                       <c-spinner size="sm" class="me-2"></c-spinner>
                     }

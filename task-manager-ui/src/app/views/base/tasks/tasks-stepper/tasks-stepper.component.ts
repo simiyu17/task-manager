@@ -162,11 +162,20 @@ export class TasksStepperComponent implements AfterViewInit, OnInit {
     }
   }
 
-  onStepSaved(event: { success: boolean; message?: string }): void {
+  onStepSaved(event: { success: boolean; message?: string; status?: string }): void {
     if (event.success) {
       // Step saved successfully - mark as complete
       this.steps[this.currentStep - 1].completed = true;
       this.isSubmitting = false;
+      
+      // If status is provided (e.g., from task-acceptance), reload task to update steps
+      if (event.status) {
+        const taskIdToUse = this.createdTaskId || this.taskId;
+        if (taskIdToUse) {
+          this.loadTaskAndCheckStatus(taskIdToUse);
+        }
+      }
+      
       this.cdr.detectChanges();
     } else {
       this.isSubmitting = false;
@@ -391,7 +400,7 @@ export class TasksStepperComponent implements AfterViewInit, OnInit {
     return this.currentStep === 4 && !this.createMode && !!(this.createdTaskId || this.taskId);
   }
 
-  moveToNextStatus(): void {
+  moveToNextStatus(newStatus: string): void {
     const taskIdToUse = this.createdTaskId || this.taskId;
     if (!taskIdToUse) {
       console.error('No task ID available');
@@ -399,16 +408,16 @@ export class TasksStepperComponent implements AfterViewInit, OnInit {
     }
 
     // Show confirmation dialog
-    if (!confirm('Are you sure you want to move this task to the next step? This action cannot be undone.')) {
+    if (!confirm(`Are you sure you want to move this task to ${newStatus} status? This action cannot be undone.`)) {
       return;
     }
 
     this.isSubmitting = true;
-    this.taskService.moveTaskToNextStatus(taskIdToUse).subscribe({
+    this.taskService.updateTaskStatus(taskIdToUse, newStatus).subscribe({
       next: (response) => {
         this.isSubmitting = false;
-        console.log('Task moved to next status:', response);
-        alert('Task successfully moved to next status!');
+        console.log('Task status updated:', response);
+        alert(`Task successfully moved to ${newStatus} status!`);
         
         // Refetch task to get latest status and unlock appropriate steps
         this.loadTaskAndCheckStatus(taskIdToUse);
@@ -417,12 +426,24 @@ export class TasksStepperComponent implements AfterViewInit, OnInit {
       },
       error: (error) => {
         this.isSubmitting = false;
-        const errorMessage = error.error?.message || 'Failed to move task to next status. Please try again.';
-        console.error('Error moving task to next status:', error);
+        const errorMessage = error.error?.message || 'Failed to update task status. Please try again.';
+        console.error('Error updating task status:', error);
         alert(errorMessage);
         this.cdr.detectChanges();
       }
     });
+  }
+
+  getNextStatusForCurrentStep(): string {
+    // Determine the next status based on current step
+    switch (this.currentStep) {
+      case 3:
+        return 'REVIEW_COMPLETED';
+      case 4:
+        return 'ALLOCATED';
+      default:
+        return 'UNKNOWN';
+    }
   }
 
   onReviewSaved(): void {
