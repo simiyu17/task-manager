@@ -1,0 +1,138 @@
+<c-row>
+  <c-col xs="12">
+    <div class="task-acceptance-container">
+      <h4 class="mb-4">Task Acceptance</h4>
+      <p class="text-body-secondary mb-4">
+        Formal acceptance of the task by assigned team members. Please review the task details and indicate whether you accept or reject this task assignment.
+      </p>
+
+      <!-- Success Message -->
+      @if (successMessage) {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle me-2" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+            <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+          </svg>
+          {{ successMessage }}
+        </div>
+      }
+
+      <!-- Error Message -->
+      @if (errorMessage) {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle me-2" viewBox="0 0 16 16">
+            <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z"/>
+            <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+          </svg>
+          {{ errorMessage }}
+        </div>
+      }
+
+      <!-- Form -->
+      <form cForm [formGroup]="acceptanceForm" (ngSubmit)="onSubmit()">
+        <!-- Decision Radio Buttons -->
+        <c-row class="mb-4">
+          <c-col md="12">
+            <label cLabel class="mb-3">Decision <span class="text-danger">*</span></label>
+            <div class="decision-radio-group">
+              <c-form-check class="mb-2">
+                <input 
+                  cFormCheckInput
+                  type="radio" 
+                  id="acceptRadio"
+                  formControlName="decision"
+                  value="accept"
+                  [class.is-invalid]="f['decision'].invalid && f['decision'].touched">
+                <label cFormCheckLabel for="acceptRadio">
+                  <strong class="text-success">Accept</strong> - I accept this task and commit to deliver within the specified timeline and quality standards
+                </label>
+              </c-form-check>
+              
+              <c-form-check>
+                <input 
+                  cFormCheckInput
+                  type="radio" 
+                  id="rejectRadio"
+                  formControlName="decision"
+                  value="reject"
+                  [class.is-invalid]="f['decision'].invalid && f['decision'].touched">
+                <label cFormCheckLabel for="rejectRadio">
+                  <strong class="text-danger">Reject</strong> - I cannot accept this task at this time
+                </label>
+              </c-form-check>
+            </div>
+            @if (f['decision'].invalid && f['decision'].touched) {
+              <div class="text-danger mt-2" style="font-size: 0.875em;">
+                Please select a decision (Accept or Reject)
+              </div>
+            }
+          </c-col>
+        </c-row>
+
+        <!-- Notes Textarea -->
+        <c-row class="mb-3">
+          <c-col md="12">
+            <label cLabel for="notes">
+              {{ f['decision'].value === 'accept' ? 'Acceptance Notes' : 'Rejection Notes' }}
+              <span class="text-danger">*</span>
+            </label>
+            <textarea 
+              cFormControl
+              id="notes"
+              formControlName="notes"
+              rows="6"
+              [placeholder]="f['decision'].value === 'accept' 
+                ? 'Please provide any notes or comments regarding your acceptance of this task...' 
+                : 'Please explain the reason for rejecting this task...'"
+              [class.is-invalid]="f['notes'].invalid && f['notes'].touched"
+              [class.is-valid]="f['notes'].valid && f['notes'].touched">
+            </textarea>
+            <c-form-feedback *ngIf="f['notes'].invalid && f['notes'].touched" [valid]="false">
+              @if (f['notes'].errors?.['required']) {
+                Notes are required
+              }
+              @if (f['notes'].errors?.['maxlength']) {
+                Notes cannot exceed 2000 characters
+              }
+            </c-form-feedback>
+            <small class="text-muted">
+              {{ f['notes'].value?.length || 0 }} / 2000 characters
+            </small>
+          </c-col>
+        </c-row>
+
+        <!-- Submit Button -->
+        <c-row>
+          <c-col md="12">
+            <div class="d-flex justify-content-end">
+              <button 
+                cButton 
+                type="submit"
+                [color]="f['decision'].value === 'accept' ? 'success' : 'danger'"
+                [disabled]="isSubmitting || acceptanceForm.disabled">
+                @if (isSubmitting) {
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Submitting...
+                } @else {
+                  @if (f['decision'].value === 'accept') {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle me-2" viewBox="0 0 16 16">
+                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                      <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                    </svg>
+                    Accept Task
+                  } @else {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle me-2" viewBox="0 0 16 16">
+                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                      <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                    </svg>
+                    Reject Task
+                  }
+                }
+              </button>
+            </div>
+          </c-col>
+        </c-row>
+      </form>
+    </div>
+  </c-col>
+</c-row>

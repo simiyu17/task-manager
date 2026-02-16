@@ -93,9 +93,15 @@ public class Task extends BaseEntity {
 
     @Getter
     public enum TaskStatus {
-        INITIATED, TASK_UNDER_REVIEW, REVIEW_COMPLETED, ALLOCATED, ACCEPTED, WBS_SUBMITTED,
-        CN_DRAFTING, CN_UNDER_REVIEW, CN_APPROVED,
-        INCEPTION_REPORT_PENDING, EXECUTION, COMPLETED;
+        INITIATED(2), TASK_UNDER_REVIEW(3), REVIEW_COMPLETED(4), ALLOCATED(5), ACCEPTED(6), REJECTED(6), WBS_SUBMITTED(7),
+        CN_DRAFTING(8), CN_UNDER_REVIEW(9), CN_APPROVED(10), CN_REJECTED(10),
+        INCEPTION_REPORT_PENDING(11), EXECUTION(12), COMPLETED(13);
+
+        private final Integer stepValue;
+
+        TaskStatus(Integer stepValue) {
+            this.stepValue = stepValue;
+        }
 
         @JsonValue
         public String getName() {

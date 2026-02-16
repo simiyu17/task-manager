@@ -194,7 +194,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskResponseDto moveTaskToNextStatus(Long taskId) {
+    public TaskResponseDto moveTaskToNextStatus(Long taskId, Boolean rejected) {
         log.info("Moving task {} to next status", taskId);
 
         // Find task
@@ -202,7 +202,7 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new TaskNotFoundException(taskId));
 
         TaskStatus currentStatus = task.getTaskStatus();
-        TaskStatus nextStatus = getNextStatus(currentStatus);
+        TaskStatus nextStatus = getNextStatus(currentStatus, rejected);
 
         if (nextStatus == null) {
             throw new IllegalStateException("Task is already in final status: " + currentStatus);
@@ -215,16 +215,16 @@ public class TaskServiceImpl implements TaskService {
         return taskMapper.toResponseDto(updatedTask);
     }
 
-    private TaskStatus getNextStatus(TaskStatus currentStatus) {
+    private TaskStatus getNextStatus(TaskStatus currentStatus, boolean rejected) {
         return switch (currentStatus) {
             case INITIATED -> TaskStatus.TASK_UNDER_REVIEW;
             case TASK_UNDER_REVIEW -> TaskStatus.REVIEW_COMPLETED;
-            case REVIEW_COMPLETED -> TaskStatus.ALLOCATED;
-            case ALLOCATED -> TaskStatus.ACCEPTED;
+            case REVIEW_COMPLETED, REJECTED -> TaskStatus.ALLOCATED;
+            case ALLOCATED -> rejected ? TaskStatus.REJECTED : TaskStatus.ACCEPTED;
             case ACCEPTED -> TaskStatus.WBS_SUBMITTED;
             case WBS_SUBMITTED -> TaskStatus.CN_DRAFTING;
-            case CN_DRAFTING -> TaskStatus.CN_UNDER_REVIEW;
-            case CN_UNDER_REVIEW -> TaskStatus.CN_APPROVED;
+            case CN_DRAFTING, CN_REJECTED -> TaskStatus.CN_UNDER_REVIEW;
+            case CN_UNDER_REVIEW -> rejected ? TaskStatus.CN_REJECTED : TaskStatus.CN_APPROVED;
             case CN_APPROVED -> TaskStatus.INCEPTION_REPORT_PENDING;
             case INCEPTION_REPORT_PENDING -> TaskStatus.EXECUTION;
             case EXECUTION -> TaskStatus.COMPLETED;

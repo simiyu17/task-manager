@@ -25,5 +25,5 @@ public interface TaskService {
 
     TaskResponseDto updateTaskStatus(Long taskId, String status);
 
-    TaskResponseDto moveTaskToNextStatus(Long taskId);
+    TaskResponseDto moveTaskToNextStatus(Long taskId, Boolean rejected);
 }

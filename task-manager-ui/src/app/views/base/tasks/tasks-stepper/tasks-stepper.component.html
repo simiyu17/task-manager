@@ -76,13 +76,9 @@
                   </app-allocate-task>
                 }
                 @case (5) {
-                  <div class="placeholder-content">
-                    <h4 class="mb-3">Task Acceptance</h4>
-                    <p class="text-body-secondary">Formal acceptance of the task by assigned team members. Team leads and members acknowledge their roles, responsibilities, and commitment to deliver within the specified timeline and quality standards.</p>
-                    <div class="alert alert-success">
-                      <strong>Acceptance Criteria:</strong> All team members have reviewed and accepted their assigned responsibilities.
-                    </div>
-                  </div>
+                  <app-task-acceptance
+                    (stepSaved)="onStepSaved($event)">
+                  </app-task-acceptance>
                 }
                 @case (6) {
                   <div class="placeholder-content">

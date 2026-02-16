@@ -14,6 +14,7 @@ import { InitiateTaskComponent } from './initiate-task/initiate-task.component';
 import { UploadTaskDocumentComponent } from './upload-task-document/upload-task-document.component';
 import { ReviewTaskComponent } from './review-task/review-task.component';
 import { AllocateTaskComponent } from './allocate-task/allocate-task.component';
+import { TaskAcceptanceComponent } from './task-acceptance/task-acceptance.component';
 import { TaskRequestDto } from '../dto/task-request-dto';
 import { TaskService } from '../../../../services/task/task.service';
 
@@ -22,6 +23,7 @@ interface Step {
   title: string;
   completed: boolean;
   locked: boolean;
+  stepValue: number;
 }
 
 @Component({
@@ -38,7 +40,8 @@ interface Step {
     InitiateTaskComponent,
     UploadTaskDocumentComponent,
     ReviewTaskComponent,
-    AllocateTaskComponent
+    AllocateTaskComponent,
+    TaskAcceptanceComponent
   ],
   templateUrl: './tasks-stepper.component.html',
   styleUrl: './tasks-stepper.component.scss',
@@ -47,6 +50,7 @@ export class TasksStepperComponent implements AfterViewInit, OnInit {
   @ViewChild(InitiateTaskComponent) initiateTaskComponent?: InitiateTaskComponent;
   @ViewChild(UploadTaskDocumentComponent) uploadTaskDocumentComponent?: UploadTaskDocumentComponent;
   @ViewChild(ReviewTaskComponent) reviewTaskComponent?: ReviewTaskComponent;
+  @ViewChild(TaskAcceptanceComponent) taskAcceptanceComponent?: TaskAcceptanceComponent;
   @ViewChild(AllocateTaskComponent) allocateTaskComponent?: AllocateTaskComponent;
   @Output() closeRequested = new EventEmitter<void>();
   @Output() taskCreated = new EventEmitter<string>(); // Emit taskId when task is created/updated
@@ -99,25 +103,25 @@ export class TasksStepperComponent implements AfterViewInit, OnInit {
   }
   
   steps: Step[] = [
-    { id: 1, title: 'Basic Information', completed: false, locked: false },
-    { id: 2, title: 'Upload Documents', completed: false, locked: true },
-    { id: 3, title: 'Internal Review Meeting', completed: false, locked: true },
-    { id: 4, title: 'Task Allocation', completed: false, locked: true },
-    { id: 5, title: 'Task Acceptance', completed: false, locked: true },
-    { id: 6, title: 'Preliminary Scoping', completed: false, locked: true },
-    { id: 7, title: 'WBS Submission', completed: false, locked: true },
-    { id: 8, title: 'Concept Note Development', completed: false, locked: true },
-    { id: 9, title: 'Internal Review', completed: false, locked: true },
-    { id: 10, title: 'Finalization of Concept Note', completed: false, locked: true },
-    { id: 11, title: 'Inception Report Development', completed: false, locked: true },
-    { id: 12, title: 'Quality Review and Enhancement Meeting', completed: false, locked: true },
-    { id: 13, title: 'Inception Report Finalization and Submission', completed: false, locked: true },
-    { id: 14, title: 'Inception Meeting', completed: false, locked: true },
-    { id: 15, title: 'Task Execution', completed: false, locked: true },
-    { id: 16, title: 'Implementation and Data Collection', completed: false, locked: true },
-    { id: 17, title: 'Draft Reporting and Validation', completed: false, locked: true },
-    { id: 18, title: 'Final Reporting and Completion', completed: false, locked: true },
-    { id: 19, title: 'Exit and Sustainability Planning', completed: false, locked: true }
+    { id: 1, title: 'Basic Information', completed: false, locked: false , stepValue: 2 },
+    { id: 2, title: 'Upload Documents', completed: false, locked: true, stepValue: 2 },
+    { id: 3, title: 'Internal Review Meeting', completed: false, locked: true, stepValue: 2 },
+    { id: 4, title: 'Task Allocation', completed: false, locked: true, stepValue: 4 },
+    { id: 5, title: 'Task Acceptance', completed: false, locked: true, stepValue: 5 },
+    { id: 6, title: 'Preliminary Scoping', completed: false, locked: true, stepValue: 7 },
+    { id: 7, title: 'WBS Submission', completed: false, locked: true, stepValue: 7 },
+    { id: 8, title: 'Concept Note Development', completed: false, locked: true, stepValue: 8 },
+    { id: 9, title: 'Internal Review', completed: false, locked: true, stepValue: 9 },
+    { id: 10, title: 'Finalization of Concept Note', completed: false, locked: true, stepValue: 10 },
+    { id: 11, title: 'Inception Report Development', completed: false, locked: true, stepValue: 11 },
+    { id: 12, title: 'Quality Review and Enhancement Meeting', completed: false, locked: true, stepValue: 12 },
+    { id: 13, title: 'Inception Report Finalization and Submission', completed: false, locked: true, stepValue: 13 },
+    { id: 14, title: 'Inception Meeting', completed: false, locked: true, stepValue: 14 },
+    { id: 15, title: 'Task Execution', completed: false, locked: true, stepValue: 15 },
+    { id: 16, title: 'Implementation and Data Collection', completed: false, locked: true, stepValue: 16 },
+    { id: 17, title: 'Draft Reporting and Validation', completed: false, locked: true, stepValue: 17 },
+    { id: 18, title: 'Final Reporting and Completion', completed: false, locked: true, stepValue: 18 },
+    { id: 19, title: 'Exit and Sustainability Planning', completed: false, locked: true, stepValue: 19 }
   ];
 
   onTaskCreated(event: { success: boolean; taskId?: string; data?: TaskRequestDto }): void {
@@ -441,14 +445,24 @@ export class TasksStepperComponent implements AfterViewInit, OnInit {
   }
 
   loadTaskAndCheckStatus(taskId: string): void {
-    // Load task details and check if status is REVIEW_COMPLETED to unlock step 4
+    // Load task details and update step states based on TaskResponse.stepValue
     this.taskService.getTask(taskId).subscribe({
       next: (task) => {
-        if (task.taskStatus === 'REVIEW_COMPLETED') {
-          // Unlock step 4 (id: 4, index: 3)
-          this.steps[3].locked = false;
-          this.cdr.detectChanges();
-        }
+        // Update all steps based on TaskResponse.stepValue
+        this.steps.forEach((step) => {
+          // Unlock step if step.stepValue <= TaskResponse.stepValue
+          step.locked = step.stepValue > task.stepValue;
+          
+          // Mark step as completed if TaskResponse.stepValue > step.stepValue
+          step.completed = task.stepValue > step.stepValue;
+          
+          // Set current step to active step (where TaskResponse.stepValue == step.stepValue)
+          if (task.stepValue === step.stepValue) {
+            this.currentStep = step.id;
+          }
+        });
+        
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error loading task:', error);

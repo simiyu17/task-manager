@@ -24,6 +24,7 @@ export interface TaskResponse {
   rejectionNotes?: string;
   progress?: number;
   priority?: string;
+  stepValue: number;
 }
 
 export interface PartnerResponseDto {
@@ -181,11 +182,13 @@ export class TaskService {
   /**
    * Move task to next status in workflow
    * @param taskId - Task ID
+   * @param reject - Whether to reject the task
    */
-  moveTaskToNextStatus(taskId: string): Observable<TaskResponse> {
+  moveTaskToNextStatus(taskId: string, reject: boolean = false): Observable<TaskResponse> {
     return this.apiService.patch<TaskResponse>(
       `${this.TASKS_ENDPOINT}/${taskId}/next-status`,
-      null
+      null,
+      { params: { isRejected: reject.toString() } }
     );
   }
 }

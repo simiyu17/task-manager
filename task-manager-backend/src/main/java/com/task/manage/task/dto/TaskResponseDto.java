@@ -24,6 +24,7 @@ public record TaskResponseDto(
         Instant dateCreated,
         Instant lastModified,
         String createdBy,
-        String lastModifiedBy
+        String lastModifiedBy,
+        Integer stepValue
 ) {
 }
