@@ -1,6 +1,6 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import {
   CardBodyComponent,
   CardComponent,
@@ -11,16 +11,23 @@ import {
   TableDirective,
   PageItemComponent,
   PageLinkDirective,
-  PaginationComponent
+  PaginationComponent,
+  ModalComponent,
+  ModalHeaderComponent,
+  ModalTitleDirective,
+  ModalBodyComponent,
+  ModalFooterComponent,
+  ButtonCloseDirective
 } from '@coreui/angular';
 import { TaskService, TaskResponse } from '../../../services/task/task.service';
 import { AuthService } from '../../../services/users/auth.service';
+import { InitiateTaskComponent } from './initiate-task/initiate-task.component';
+import { TaskRequestDto } from './dto/task-request-dto';
 
 @Component({
   selector: 'app-tasks',
   imports: [
     CommonModule,
-    RouterLink,
     RowComponent,
     ColComponent,
     CardComponent,
@@ -30,13 +37,22 @@ import { AuthService } from '../../../services/users/auth.service';
     TableDirective,
     PaginationComponent,
     PageItemComponent,
-    PageLinkDirective
+    PageLinkDirective,
+    ModalComponent,
+    ModalHeaderComponent,
+    ModalTitleDirective,
+    ModalBodyComponent,
+    ModalFooterComponent,
+    ButtonCloseDirective,
+    InitiateTaskComponent
   ],
   providers: [DatePipe],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.scss',
 })
 export class TasksComponent implements OnInit {
+  @ViewChild(InitiateTaskComponent) initiateTaskComponent?: InitiateTaskComponent;
+  
   tasks: TaskResponse[] = [];
   paginatedTasks: TaskResponse[] = [];
   currentPage = 1;
@@ -44,6 +60,10 @@ export class TasksComponent implements OnInit {
   totalPages = 0;
   Math = Math;
   isLoading = true;
+  
+  // Modal properties
+  initiateTaskModalVisible = false;
+  createdTaskId: string | null = null;
 
   constructor(
     private taskService: TaskService,
@@ -153,5 +173,44 @@ export class TasksComponent implements OnInit {
 
   onView(task: TaskResponse): void {
     this.router.navigate(['/base/tasks', task.id, 'view']);
+  }
+
+  // Modal methods
+  openInitiateTaskModal(): void {
+    this.initiateTaskModalVisible = true;
+  }
+
+  closeInitiateTaskModal(): void {
+    this.initiateTaskModalVisible = false;
+    this.createdTaskId = null;
+  }
+
+  handleInitiateTaskModalChange(event: boolean): void {
+    this.initiateTaskModalVisible = event;
+    if (!event) {
+      this.createdTaskId = null;
+    }
+  }
+
+  onTaskCreated(event: { success: boolean; taskId?: string; data?: TaskRequestDto }): void {
+    if (event.success && event.taskId) {
+      this.createdTaskId = event.taskId;
+      // Close modal
+      this.closeInitiateTaskModal();
+      // Reload tasks to show the new one
+      this.loadTasks();
+      // Navigate to view task
+      this.router.navigate(['/base/tasks', event.taskId, 'view']);
+    }
+  }
+
+  submitInitiateTask(): void {
+    if (this.initiateTaskComponent) {
+      this.initiateTaskComponent.onSubmit();
+    }
+  }
+
+  cancelInitiateTask(): void {
+    this.closeInitiateTaskModal();
   }
 }

@@ -12,8 +12,8 @@ import {
   FormLabelDirective,
   ButtonDirective
 } from '@coreui/angular';
-import { TaskService } from '../../../../../services/task/task.service';
-import { PartnerService, PartnerResponseDto } from '../../../../../services/partner/partner.service';
+import { TaskService } from '../../../../services/task/task.service';
+import { PartnerService, PartnerResponseDto } from '../../../../services/partner/partner.service';
 
 @Component({
   selector: 'app-allocate-task',

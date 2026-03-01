@@ -9,7 +9,7 @@ import {
   FormFeedbackComponent,
   FormSelectDirective
 } from '@coreui/angular';
-import { DocumentService } from '../../../../../services/document/document.service';
+import { DocumentService } from '../../../../services/document/document.service';
 
 interface DocumentType {
   value: string;

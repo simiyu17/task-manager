@@ -1,234 +1,248 @@
-<c-row>
-  <c-col xs="12">
-    <c-card class="mb-4">
-      <c-card-header>
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <strong>Task Details</strong>
-            <button 
-              type="button" 
-              cButton 
-              color="link"
-              size="sm"
-              class="ms-2"
-              (click)="goBack()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-1" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
-              </svg>
-              Back to Tasks
-            </button>
-          </div>
-          <div class="d-flex gap-2">
-            <button 
-              type="button" 
-              cButton 
-              color="primary"
-              size="sm"
-              (click)="onEditBasicDetails()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-pencil me-1" viewBox="0 0 16 16">
-                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
-              </svg>
-              Edit Basic Details
-            </button>
-            <button 
-              type="button" 
-              cButton 
-              color="info"
-              size="sm"
-              (click)="onUpdateProgress()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-arrow-repeat me-1" viewBox="0 0 16 16">
-                <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"/>
-                <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"/>
-              </svg>
-              Update Progress
-            </button>
-            <button 
-              type="button" 
-              cButton 
-              color="danger"
-              size="sm"
-              (click)="onCancelTask()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-x-circle me-1" viewBox="0 0 16 16">
-                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
-              </svg>
-              Cancel Task
-            </button>
+<div class="jira-layout">
+  <!-- Header -->
+  <div class="task-header">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <button 
+        type="button" 
+        cButton 
+        color="link"
+        size="sm"
+        class="back-button"
+        (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-1" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+        </svg>
+        Back to Tasks
+      </button>
+      <div class="d-flex gap-2">
+        <button 
+          type="button" 
+          cButton 
+          color="primary"
+          size="sm"
+          (click)="onEditBasicDetails()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-pencil me-1" viewBox="0 0 16 16">
+            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+          </svg>
+          Edit
+        </button>
+        <button 
+          type="button" 
+          cButton 
+          color="info"
+          size="sm"
+          (click)="onUpdateProgress()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-arrow-repeat me-1" viewBox="0 0 16 16">
+            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"/>
+            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"/>
+          </svg>
+          Update Progress
+        </button>
+        <button 
+          type="button" 
+          cButton 
+          color="danger"
+          size="sm"
+          (click)="onCancelTask()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-x-circle me-1" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+          </svg>
+          Cancel Task
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (isLoadingTask) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  } @else if (task) {
+    <!-- Two Column Layout -->
+    <c-row class="g-3">
+      <!-- Main Content (Left Column) -->
+      <c-col lg="8">
+        <!-- Title -->
+        <div class="task-title mb-4">
+          <h2>{{ task.title }}</h2>
+        </div>
+
+        <!-- Description Section -->
+        <div class="section mb-4">
+          <h5 class="section-title">Description</h5>
+          <div class="section-content">
+            {{ task.description || 'No description provided' }}
           </div>
         </div>
-      </c-card-header>
-      <c-card-body>
-        @if (isLoadingTask) {
-          <div class="text-center py-5">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-          </div>
-        } @else if (task) {
-          <!-- Task Information -->
-          <c-row class="mb-4">
-            <c-col md="6">
-              <div class="detail-item">
-                <label class="detail-label">Task ID</label>
-                <div class="detail-value">{{ task.id }}</div>
-              </div>
-            </c-col>
-            <c-col md="6">
-              <div class="detail-item">
-                <label class="detail-label">Status</label>
-                <div class="detail-value">
-                  <span class="badge" [ngClass]="'bg-' + getStatusColor(task.taskStatus)">
-                    {{ task.taskStatus }}
-                  </span>
+
+        <!-- Comments Section -->
+        <div class="section">
+          <h5 class="section-title mb-3">Comments</h5>
+          <app-task-comments [taskId]="taskId"></app-task-comments>
+        </div>
+      </c-col>
+
+      <!-- Details Sidebar (Right Column) -->
+      <c-col lg="4">
+        <!-- Details Accordion -->
+        <c-accordion [flush]="true" class="mb-3">
+          <c-accordion-item [visible]="true">
+            <ng-template cTemplateId="accordionHeader">Details</ng-template>
+            <ng-template cTemplateId="accordionBody">
+              <div class="accordion-body details-content">
+                <!-- Status -->
+                <div class="detail-item">
+                  <div class="detail-label">Status</div>
+                  <div class="detail-value">
+                    <span class="badge" [ngClass]="'bg-' + getStatusColor(task.taskStatus)">
+                      {{ task.taskStatus }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Assignee -->
+                <div class="detail-item">
+                  <div class="detail-label">Assignee</div>
+                  <div class="detail-value">
+                    @if (task.assignedPartner) {
+                      <div class="d-flex align-items-center">
+                        <div class="avatar-circle me-2">
+                          {{ task.assignedPartner.partnerName.charAt(0).toUpperCase() }}
+                        </div>
+                        <span>{{ task.assignedPartner.partnerName }}</span>
+                      </div>
+                    } @else {
+                      <span class="text-muted">Unassigned</span>
+                    }
+                  </div>
+                </div>
+
+                <!-- Reporter (Donor) -->
+                <div class="detail-item">
+                  <div class="detail-label">Reporter</div>
+                  <div class="detail-value">
+                    <div class="d-flex align-items-center">
+                      <div class="avatar-circle me-2">
+                        {{ task.donor.donorName.charAt(0).toUpperCase() }}
+                      </div>
+                      <span>{{ task.donor.donorName }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Due date (Deadline) -->
+                <div class="detail-item">
+                  <div class="detail-label">Due date</div>
+                  <div class="detail-value">
+                    {{ formatDate(task.deadline) }}
+                  </div>
+                </div>
+
+                <!-- Start date (Created Date) -->
+                <div class="detail-item">
+                  <div class="detail-label">Start date</div>
+                  <div class="detail-value">
+                    {{ formatDate(task.dateCreated) }}
+                  </div>
+                </div>
+
+                <!-- Validated Budget -->
+                <div class="detail-item">
+                  <div class="detail-label">Validated Budget</div>
+                  <div class="detail-value">
+                    {{ task.validatedBudget ? (task.validatedBudget | currency) : 'Not specified' }}
+                  </div>
+                </div>
+
+                <!-- Accepted Date -->
+                @if (task.acceptedAt) {
+                  <div class="detail-item">
+                    <div class="detail-label">Accepted Date</div>
+                    <div class="detail-value">
+                      {{ formatDateTime(task.acceptedAt) }}
+                    </div>
+                  </div>
+                }
+
+                <!-- Created and Updated timestamps -->
+                <div class="detail-timestamps">
+                  <small class="text-muted d-block">Created {{ formatDateTime(task.dateCreated) }}</small>
+                  <small class="text-muted d-block">Updated {{ formatDateTime(task.acceptedAt || task.dateCreated) }}</small>
                 </div>
               </div>
-            </c-col>
-          </c-row>
+            </ng-template>
+          </c-accordion-item>
+        </c-accordion>
 
-          <c-row class="mb-4">
-            <c-col md="12">
-              <div class="detail-item">
-                <label class="detail-label">Title</label>
-                <div class="detail-value">{{ task.title }}</div>
-              </div>
-            </c-col>
-          </c-row>
-
-          <c-row class="mb-4">
-            <c-col md="12">
-              <div class="detail-item">
-                <label class="detail-label">Description</label>
-                <div class="detail-value">{{ task.description || 'No description provided' }}</div>
-              </div>
-            </c-col>
-          </c-row>
-
-          <c-row class="mb-4">
-            <c-col md="6">
-              <div class="detail-item">
-                <label class="detail-label">Task Provider</label>
-                <div class="detail-value">{{ task.donor.donorName }}</div>
-              </div>
-            </c-col>
-            <c-col md="6">
-              <div class="detail-item">
-                <label class="detail-label">Assigned Partner</label>
-                <div class="detail-value">{{ task.assignedPartner?.partnerName || 'Not assigned' }}</div>
-              </div>
-            </c-col>
-          </c-row>
-
-          <c-row class="mb-4">
-            <c-col md="6">
-              <div class="detail-item">
-                <label class="detail-label">Validated Budget</label>
-                <div class="detail-value">{{ task.validatedBudget ? (task.validatedBudget | currency) : 'Not specified' }}</div>
-              </div>
-            </c-col>
-            <c-col md="6">
-              <div class="detail-item">
-                <label class="detail-label">Deadline</label>
-                <div class="detail-value">{{ formatDate(task.deadline) }}</div>
-              </div>
-            </c-col>
-          </c-row>
-
-          <c-row class="mb-4">
-            <c-col md="6">
-              <div class="detail-item">
-                <label class="detail-label">Created Date</label>
-                <div class="detail-value">{{ formatDateTime(task.dateCreated) }}</div>
-              </div>
-            </c-col>
-            <c-col md="6">
-              <div class="detail-item">
-                <label class="detail-label">Accepted Date</label>
-                <div class="detail-value">{{ formatDateTime(task.acceptedAt) }}</div>
-              </div>
-            </c-col>
-          </c-row>
-
-          <!-- Documents Section -->
-          <hr class="my-4">
-          <h5 class="mb-3">Task Documents</h5>
-          
-          @if (isLoadingDocuments) {
-            <div class="text-center py-3">
-              <div class="spinner-border spinner-border-sm text-primary" role="status">
-                <span class="visually-hidden">Loading documents...</span>
-              </div>
-            </div>
-          } @else if (documents.length > 0) {
-            <div class="table-responsive">
-              <table cTable [hover]="true" [striped]="true">
-                <thead>
-                  <tr>
-                    <th scope="col">File Name</th>
-                    <th scope="col">Document Type</th>
-                    <th scope="col">Upload Date</th>
-                    <th scope="col">Final</th>
-                    <th scope="col" class="text-center">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (doc of documents; track doc.id) {
-                    <tr>
-                      <td>{{ doc.fileName }}</td>
-                      <td>
-                        <span class="badge bg-secondary">{{ doc.documentType }}</span>
-                      </td>
-                      <td>{{ formatDateTime(doc.uploadedAt) }}</td>
-                      <td>
-                        @if (doc.isFinal) {
-                          <span class="badge bg-success">Final</span>
-                        } @else {
-                          <span class="badge bg-warning">Draft</span>
-                        }
-                      </td>
-                      <td>
-                        <div class="d-flex gap-2 justify-content-center">
-                          <button 
-                            type="button" 
-                            cButton 
-                            color="info"
-                            size="sm"
-                            title="View"
-                            (click)="viewDocument(doc.id)">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                              <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
-                              <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
-                            </svg>
-                          </button>
-                          <button 
-                            type="button" 
-                            cButton 
-                            color="primary"
-                            size="sm"
-                            title="Download"
-                            (click)="downloadDocument(doc.id, doc.fileName)">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
-                              <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
-                              <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
-                            </svg>
-                          </button>
+        <!-- Document Type Accordions -->
+        <c-accordion [flush]="true">
+          @for (docType of getDocumentTypes(); track docType) {
+            <c-accordion-item>
+              <ng-template cTemplateId="accordionHeader">
+                {{ docType }}
+                <span class="badge bg-secondary ms-2">{{ getDocumentsByType()[docType].length }}</span>
+              </ng-template>
+              <ng-template cTemplateId="accordionBody">
+                <div class="accordion-body document-list">
+                  @for (doc of getDocumentsByType()[docType]; track doc.id) {
+                    <div class="document-item">
+                      <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="flex-grow-1">
+                          <div class="document-name">{{ doc.fileName }}</div>
+                          <small class="text-muted">{{ formatDateTime(doc.uploadedAt) }}</small>
                         </div>
-                      </td>
-                    </tr>
+                        <div>
+                          @if (doc.isFinal) {
+                            <span class="badge bg-success">Final</span>
+                          } @else {
+                            <span class="badge bg-warning">Draft</span>
+                          }
+                        </div>
+                      </div>
+                      <div class="d-flex gap-2">
+                        <button 
+                          type="button" 
+                          cButton 
+                          color="info"
+                          size="sm"
+                          title="View"
+                          (click)="viewDocument(doc.id)">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                          </svg>
+                          View
+                        </button>
+                        <button 
+                          type="button" 
+                          cButton 
+                          color="primary"
+                          size="sm"
+                          title="Download"
+                          (click)="downloadDocument(doc.id, doc.fileName)">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+                          </svg>
+                          Download
+                        </button>
+                      </div>
+                    </div>
                   }
-                </tbody>
-              </table>
-            </div>
-          } @else {
-            <div class="alert alert-info">
-              No documents uploaded yet.
-            </div>
+                </div>
+              </ng-template>
+            </c-accordion-item>
           }
-        } @else {
-          <div class="alert alert-danger">
-            {{ errorMessage || 'Failed to load task details' }}
-          </div>
-        }
-      </c-card-body>
-    </c-card>
-  </c-col>
-</c-row>
+        </c-accordion>
+      </c-col>
+    </c-row>
+  } @else {
+    <div class="alert alert-danger">
+      {{ errorMessage || 'Failed to load task details' }}
+    </div>
+  }
+</div>
+

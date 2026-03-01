@@ -13,7 +13,7 @@ import {
   RowComponent,
   AccordionModule
 } from '@coreui/angular';
-import { ReviewService } from '../../../../../services/review/review.service';
+import { ReviewService } from '../../../../services/review/review.service';
 import {
   TaskReviewResponseDto,
   TaskReviewRequestDto,
@@ -21,7 +21,7 @@ import {
   ClarifyingQuestionRequestDto,
   AnswerQuestionRequestDto,
   ReviewStatus
-} from '../../../../../services/review/review-dtos';
+} from '../../../../services/review/review-dtos';
 
 @Component({
   selector: 'app-review-task',

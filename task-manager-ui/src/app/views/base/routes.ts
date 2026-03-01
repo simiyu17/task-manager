@@ -22,14 +22,6 @@ export const routes: Routes = [
         }
       },
       {
-        path: 'tasks/initiate-task',
-        loadComponent: () => import('./tasks/tasks-stepper/tasks-stepper.component').then(m => m.TasksStepperComponent),
-        canActivate: [AuthGuard],
-        data: {
-          title: 'Initiate Task'
-        }
-      },
-      {
         path: 'tasks/:id/view',
         loadComponent: () => import('./tasks/view-task/view-task.component').then(m => m.ViewTaskComponent),
         canActivate: [AuthGuard],

@@ -10,9 +10,9 @@ import {
   FormFeedbackComponent,
   FormSelectDirective
 } from '@coreui/angular';
-import { TaskRequestDto } from '../../dto/task-request-dto';
-import { TaskService } from '../../../../../services/task/task.service';
-import { DonorService, DonorResponseDto } from '../../../../../services/donor/donor.service';
+import { TaskRequestDto } from '../dto/task-request-dto';
+import { TaskService } from '../../../../services/task/task.service';
+import { DonorService, DonorResponseDto } from '../../../../services/donor/donor.service';
 
 @Component({
   selector: 'app-initiate-task',

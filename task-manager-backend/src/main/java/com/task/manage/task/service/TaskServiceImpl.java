@@ -21,6 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -230,5 +232,153 @@ public class TaskServiceImpl implements TaskService {
             case EXECUTION -> TaskStatus.COMPLETED;
             case COMPLETED -> null; // Final status
         };
+    }
+
+    @Override
+    public TaskResponseDto updateTitle(Long taskId, String title) {
+        log.info("Updating title of task {} to {}", taskId, title);
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException(taskId));
+
+        // Check if new title already exists
+        if (!task.getTitle().equals(title) && taskRepository.existsByTitle(title)) {
+            throw new TaskAlreadyExistsException("Task already exists with title: " + title);
+        }
+
+        task.setTitle(title);
+        Task updatedTask = taskRepository.save(task);
+        log.info("Task title updated successfully");
+
+        return taskMapper.toResponseDto(updatedTask);
+    }
+
+    @Override
+    public TaskResponseDto updateDonor(Long taskId, Long donorId) {
+        log.info("Updating donor of task {} to donor {}", taskId, donorId);
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException(taskId));
+
+        Donor donor = donorRepository.findById(donorId)
+                .orElseThrow(() -> new DonorNotFoundException(donorId));
+
+        task.setDonor(donor);
+        Task updatedTask = taskRepository.save(task);
+        log.info("Task donor updated successfully");
+
+        return taskMapper.toResponseDto(updatedTask);
+    }
+
+    @Override
+    public TaskResponseDto updateDescription(Long taskId, String description) {
+        log.info("Updating description of task {}", taskId);
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException(taskId));
+
+        task.setDescription(description);
+        Task updatedTask = taskRepository.save(task);
+        log.info("Task description updated successfully");
+
+        return taskMapper.toResponseDto(updatedTask);
+    }
+
+    @Override
+    public TaskResponseDto updateValidatedBudget(Long taskId, BigDecimal validatedBudget) {
+        log.info("Updating validated budget of task {} to {}", taskId, validatedBudget);
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException(taskId));
+
+        task.setValidatedBudget(validatedBudget);
+        Task updatedTask = taskRepository.save(task);
+        log.info("Task validated budget updated successfully");
+
+        return taskMapper.toResponseDto(updatedTask);
+    }
+
+    @Override
+    public TaskResponseDto updateRequestReceivedAt(Long taskId, LocalDateTime requestReceivedAt) {
+        log.info("Updating request received at of task {} to {}", taskId, requestReceivedAt);
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException(taskId));
+
+        task.setRequestReceivedAt(requestReceivedAt);
+        Task updatedTask = taskRepository.save(task);
+        log.info("Task request received at updated successfully");
+
+        return taskMapper.toResponseDto(updatedTask);
+    }
+
+    @Override
+    public TaskResponseDto updateAcceptedAt(Long taskId, LocalDateTime acceptedAt) {
+        log.info("Updating accepted at of task {} to {}", taskId, acceptedAt);
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException(taskId));
+
+        task.setAcceptedAt(acceptedAt);
+        Task updatedTask = taskRepository.save(task);
+        log.info("Task accepted at updated successfully");
+
+        return taskMapper.toResponseDto(updatedTask);
+    }
+
+    @Override
+    public TaskResponseDto updateDeadline(Long taskId, LocalDateTime deadline) {
+        log.info("Updating deadline of task {} to {}", taskId, deadline);
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException(taskId));
+
+        task.setDeadline(deadline);
+        Task updatedTask = taskRepository.save(task);
+        log.info("Task deadline updated successfully");
+
+        return taskMapper.toResponseDto(updatedTask);
+    }
+
+    @Override
+    public TaskResponseDto updateAllocateNotes(Long taskId, String allocateNotes) {
+        log.info("Updating allocate notes of task {}", taskId);
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException(taskId));
+
+        task.setAllocateNotes(allocateNotes);
+        Task updatedTask = taskRepository.save(task);
+        log.info("Task allocate notes updated successfully");
+
+        return taskMapper.toResponseDto(updatedTask);
+    }
+
+    @Override
+    public TaskResponseDto updateAcceptanceNotes(Long taskId, String acceptanceNotes) {
+        log.info("Updating acceptance notes of task {}", taskId);
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException(taskId));
+
+        task.setAcceptanceNotes(acceptanceNotes);
+        Task updatedTask = taskRepository.save(task);
+        log.info("Task acceptance notes updated successfully");
+
+        return taskMapper.toResponseDto(updatedTask);
+    }
+
+    @Override
+    public TaskResponseDto updateRejectionNotes(Long taskId, String rejectionNotes) {
+        log.info("Updating rejection notes of task {}", taskId);
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException(taskId));
+
+        task.setRejectionNotes(rejectionNotes);
+        Task updatedTask = taskRepository.save(task);
+        log.info("Task rejection notes updated successfully");
+
+        return taskMapper.toResponseDto(updatedTask);
     }
 }

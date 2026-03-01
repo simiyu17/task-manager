@@ -2,16 +2,16 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  CardBodyComponent,
-  CardComponent,
-  CardHeaderComponent,
   ColComponent,
   RowComponent,
   ButtonDirective,
-  TableDirective
+  AccordionComponent,
+  AccordionItemComponent,
+  TemplateIdDirective
 } from '@coreui/angular';
 import { TaskService, TaskResponse } from '../../../../services/task/task.service';
 import { DocumentService, DocumentResponseDto } from '../../../../services/document/document.service';
+import { TaskCommentsComponent } from '../task-comments/task-comments.component';
 
 @Component({
   selector: 'app-view-task',
@@ -20,11 +20,11 @@ import { DocumentService, DocumentResponseDto } from '../../../../services/docum
     CommonModule,
     RowComponent,
     ColComponent,
-    CardComponent,
-    CardHeaderComponent,
-    CardBodyComponent,
     ButtonDirective,
-    TableDirective
+    AccordionComponent,
+    AccordionItemComponent,
+    TemplateIdDirective,
+    TaskCommentsComponent
   ],
   providers: [DatePipe],
   templateUrl: './view-task.component.html',
@@ -156,5 +156,21 @@ export class ViewTaskComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/base/tasks']);
+  }
+
+  getDocumentsByType(): { [key: string]: DocumentResponseDto[] } {
+    const grouped: { [key: string]: DocumentResponseDto[] } = {};
+    this.documents.forEach(doc => {
+      const type = doc.documentType || 'Other';
+      if (!grouped[type]) {
+        grouped[type] = [];
+      }
+      grouped[type].push(doc);
+    });
+    return grouped;
+  }
+
+  getDocumentTypes(): string[] {
+    return Object.keys(this.getDocumentsByType()).sort();
   }
 }
