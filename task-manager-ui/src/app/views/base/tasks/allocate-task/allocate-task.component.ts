@@ -9,8 +9,7 @@ import {
   FormDirective,
   FormFeedbackComponent,
   FormSelectDirective,
-  FormLabelDirective,
-  ButtonDirective
+  FormLabelDirective
 } from '@coreui/angular';
 import { TaskService } from '../../../../services/task/task.service';
 import { PartnerService, PartnerResponseDto } from '../../../../services/partner/partner.service';
@@ -27,14 +26,13 @@ import { PartnerService, PartnerResponseDto } from '../../../../services/partner
     FormControlDirective,
     FormFeedbackComponent,
     FormSelectDirective,
-    FormLabelDirective,
-    ButtonDirective
+    FormLabelDirective
   ],
   templateUrl: './allocate-task.component.html',
   styleUrl: './allocate-task.component.scss'
 })
 export class AllocateTaskComponent implements OnInit {
-  taskId?: string; // Task ID from route
+  @Input() taskId?: string; // Task ID from route or parent component
   @Input() readonlyMode: boolean = false; // If true, form is readonly
   @Output() stepSaved = new EventEmitter<{ success: boolean; message?: string }>();
 
@@ -59,10 +57,12 @@ export class AllocateTaskComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Get taskId from route params
+    // Get taskId from route params if not provided via @Input
     this.route.params.subscribe(params => {
-      if (params['id'] || params['taskId']) {
+      if (!this.taskId && (params['id'] || params['taskId'])) {
         this.taskId = params['id'] || params['taskId'];
+      }
+      if (this.taskId) {
         this.loadTaskData();
       }
     });
@@ -146,7 +146,7 @@ export class AllocateTaskComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error saving task allocation:', error);
-        this.errorMessage = error.error?.message || 'Failed to save task allocation. Please try again.';
+        this.errorMessage = error.error?.detail || 'Failed to save task allocation. Please try again.';
         this.isSubmitting = false;
         this.stepSaved.emit({ success: false, message: this.errorMessage });
       }

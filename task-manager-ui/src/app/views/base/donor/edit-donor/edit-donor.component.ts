@@ -120,7 +120,7 @@ export class EditDonorComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error updating donor:', error);
-        this.errorMessage = error.error?.message || 'Failed to update donor. Please try again.';
+        this.errorMessage = error.error?.detail || 'Failed to update donor. Please try again.';
         this.isSubmitting = false;
         this.cdr.detectChanges();
       }

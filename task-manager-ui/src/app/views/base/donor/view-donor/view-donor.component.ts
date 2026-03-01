@@ -98,7 +98,7 @@ export class ViewDonorComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error deleting donor:', error);
-        this.errorMessage = error.error?.message || 'Failed to delete donor. Please try again.';
+        this.errorMessage = error.error?.detail || 'Failed to delete donor. Please try again.';
         this.isDeleting = false;
         this.showDeleteModal = false;
         this.cdr.detectChanges();

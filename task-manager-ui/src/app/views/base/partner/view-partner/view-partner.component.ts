@@ -98,7 +98,7 @@ export class ViewPartnerComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error deleting partner:', error);
-        this.errorMessage = error.error?.message || 'Failed to delete partner. Please try again.';
+        this.errorMessage = error.error?.detail || 'Failed to delete partner. Please try again.';
         this.isDeleting = false;
         this.showDeleteModal = false;
         this.cdr.detectChanges();

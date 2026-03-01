@@ -22,6 +22,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -75,6 +76,7 @@ public class Task extends BaseEntity {
         return Stream.of(TaskStatus.values())
                 .filter(status -> !status.equals(this.taskStatus))
                 .map(status -> new TaskStatusDto(status.getStepValue(), status.name(), status.getDisplayName()))
+                .sorted(Comparator.comparingInt(TaskStatusDto::stepValue))
                 .toList();
     }
 
@@ -107,7 +109,7 @@ public class Task extends BaseEntity {
         WBS_SUBMITTED(6),
         CONCEPT_NOTE_SUBMITTED(7), CONCEPT_NOTE_UNDER_REVIEW(8), CONCEPT_NOTE_APPROVED(9), CONCEPT_NOTE_REJECTED(10),
         INCEPTION_REPORT_SUBMITTED(11), INCEPTION_REPORT_UNDER_REVIEW(12), INCEPTION_REPORT_APPROVED(13), INCEPTION_REPORT_REJECTED(14),
-        EXECUTION(15), COMPLETED(16);
+        EXECUTION_UNDERWAY(15), COMPLETED(16);
 
         private final Integer stepValue;
 

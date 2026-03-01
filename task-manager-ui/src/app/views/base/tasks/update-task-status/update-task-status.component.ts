@@ -73,7 +73,8 @@ export class UpdateTaskStatusComponent implements OnInit {
       },
       error: (error) => {
         this.isSubmitting = false;
-        this.errorMessage = error.error?.message || 'Failed to update task status. Please try again.';
+        console.error('Error updating task status:', error.error);
+        this.errorMessage = error.error?.detail || 'Failed to update task status. Please try again.';
         this.statusUpdated.emit({ success: false });
       }
     });

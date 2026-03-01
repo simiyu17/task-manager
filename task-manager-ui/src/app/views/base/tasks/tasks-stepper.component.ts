@@ -426,7 +426,7 @@ export class TasksStepperComponent implements AfterViewInit, OnInit {
       },
       error: (error) => {
         this.isSubmitting = false;
-        const errorMessage = error.error?.message || 'Failed to update task status. Please try again.';
+        const errorMessage = error.error?.detail || 'Failed to update task status. Please try again.';
         console.error('Error updating task status:', error);
         alert(errorMessage);
         this.cdr.detectChanges();

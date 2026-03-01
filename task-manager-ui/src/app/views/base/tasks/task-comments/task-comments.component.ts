@@ -8,7 +8,6 @@ import {
   ButtonDirective,
   FormDirective,
   FormControlDirective,
-  FormSelectDirective,
   ColComponent,
   RowComponent,
   AccordionModule
@@ -34,7 +33,6 @@ import {
     ButtonDirective,
     FormDirective,
     FormControlDirective,
-    FormSelectDirective,
     ColComponent,
     RowComponent,
     AccordionModule

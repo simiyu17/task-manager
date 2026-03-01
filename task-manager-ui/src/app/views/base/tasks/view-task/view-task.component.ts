@@ -25,6 +25,7 @@ import { DocumentService, DocumentResponseDto } from '../../../../services/docum
 import { TaskCommentsComponent } from '../task-comments/task-comments.component';
 import { UploadTaskDocumentComponent } from '../upload-task-document/upload-task-document.component';
 import { UpdateTaskStatusComponent } from '../update-task-status/update-task-status.component';
+import { AllocateTaskComponent } from '../allocate-task/allocate-task.component';
 
 @Component({
   selector: 'app-view-task',
@@ -50,7 +51,8 @@ import { UpdateTaskStatusComponent } from '../update-task-status/update-task-sta
     ButtonCloseDirective,
     TaskCommentsComponent,
     UploadTaskDocumentComponent,
-    UpdateTaskStatusComponent
+    UpdateTaskStatusComponent,
+    AllocateTaskComponent
   ],
   providers: [DatePipe],
   templateUrl: './view-task.component.html',
@@ -59,6 +61,7 @@ import { UpdateTaskStatusComponent } from '../update-task-status/update-task-sta
 export class ViewTaskComponent implements OnInit {
   @ViewChild('uploadDocumentComponent') uploadDocumentComponent!: UploadTaskDocumentComponent;
   @ViewChild('updateStatusComponent') updateStatusComponent!: UpdateTaskStatusComponent;
+  @ViewChild('allocateTaskComponent') allocateTaskComponent!: AllocateTaskComponent;
 
   taskId: number = 0;
   task: TaskResponse | null = null;
@@ -68,6 +71,7 @@ export class ViewTaskComponent implements OnInit {
   errorMessage = '';
   uploadDocumentModalVisible = false;
   updateStatusModalVisible = false;
+  assignTaskModalVisible = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -254,10 +258,30 @@ export class ViewTaskComponent implements OnInit {
     }
   }
 
-  onAddParticipant(): void {
-    // TODO: Implement add participant functionality
-    console.log('Add participant to task:', this.taskId);
-    alert('Add participant functionality not yet implemented');
+  onAssignTask(): void {
+    this.assignTaskModalVisible = true;
+  }
+
+  closeAssignTaskModal(): void {
+    this.assignTaskModalVisible = false;
+  }
+
+  handleAssignTaskModalChange(event: boolean): void {
+    this.assignTaskModalVisible = event;
+  }
+
+  onTaskAssigned(event: { success: boolean; message?: string }): void {
+    if (event.success) {
+      this.closeAssignTaskModal();
+      this.loadTask(); // Reload task to show updated assignment
+      console.log('Task assigned successfully');
+    }
+  }
+
+  submitAssignTask(): void {
+    if (this.allocateTaskComponent) {
+      this.allocateTaskComponent.onSubmit();
+    }
   }
 
   onCloneTask(): void {

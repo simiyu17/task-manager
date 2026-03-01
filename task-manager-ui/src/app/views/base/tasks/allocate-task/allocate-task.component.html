@@ -87,21 +87,6 @@
             </small>
           </c-col>
         </c-row>
-
-        @if (taskStatus !== 'ALLOCATED') {
-          <c-row class="mt-4">
-            <c-col>
-              <button 
-                type="submit" 
-                cButton 
-                color="primary"
-                [disabled]="isSubmitting || allocateForm.invalid">
-                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                {{ isSubmitting ? 'Saving...' : 'Save Step' }}
-              </button>
-            </c-col>
-          </c-row>
-        }
       </form>
     </div>
   </c-col>

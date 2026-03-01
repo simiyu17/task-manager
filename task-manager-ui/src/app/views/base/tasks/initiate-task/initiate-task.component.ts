@@ -153,7 +153,7 @@ export class InitiateTaskComponent implements OnInit {
       },
       error: (error) => {
         this.isSubmitting = false;
-        this.errorMessage = error.error?.message || `Failed to ${this.taskId ? 'update' : 'create'} task. Please try again.`;
+        this.errorMessage = error.error?.detail || `Failed to ${this.taskId ? 'update' : 'create'} task. Please try again.`;
         this.taskCreated.emit({ success: false, data: formData }); // Emit data even on failure to preserve form
       }
     });

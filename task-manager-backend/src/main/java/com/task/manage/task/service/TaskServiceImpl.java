@@ -1,5 +1,7 @@
 package com.task.manage.task.service;
 
+import com.task.manage.document.domain.Document;
+import com.task.manage.document.domain.DocumentRepository;
 import com.task.manage.donor.domain.Donor;
 import com.task.manage.donor.domain.DonorRepository;
 import com.task.manage.donor.exception.DonorNotFoundException;
@@ -11,6 +13,7 @@ import com.task.manage.task.domain.Task.TaskStatus;
 import com.task.manage.task.domain.TaskRepository;
 import com.task.manage.task.dto.TaskRequestDto;
 import com.task.manage.task.dto.TaskResponseDto;
+import com.task.manage.task.exception.InvalidStatusException;
 import com.task.manage.task.exception.TaskAlreadyExistsException;
 import com.task.manage.task.exception.TaskNotFoundException;
 import com.task.manage.task.mapper.TaskMapper;
@@ -34,6 +37,7 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final PartnerRepository partnerRepository;
     private final DonorRepository donorRepository;
+    private final DocumentRepository documentRepository;
     private final TaskMapper taskMapper;
 
     @Override
@@ -186,6 +190,10 @@ public class TaskServiceImpl implements TaskService {
         if (taskStatus == null) {
             throw new IllegalArgumentException("Invalid task status: " + status);
         }
+
+        // Validate status transitions
+        validateStatusTransition(task, taskStatus);
+
         task.setTaskStatus(taskStatus);
 
         // Save task
@@ -193,6 +201,54 @@ public class TaskServiceImpl implements TaskService {
         log.info("Task status updated successfully");
 
         return taskMapper.toResponseDto(updatedTask);
+    }
+
+    private void validateStatusTransition(Task task, TaskStatus newStatus) {
+        // Validation: Cannot mark as ALLOCATED if assignee is empty
+        if (newStatus == TaskStatus.ALLOCATED && task.getAssignedPartner() == null) {
+            throw new InvalidStatusException("Cannot mark task as ALLOCATED: No partner has been assigned to this task");
+        }
+
+        // Validation: Cannot mark as ACCEPTED or REJECTED if current status is not ALLOCATED
+        if ((newStatus == TaskStatus.ACCEPTED || newStatus == TaskStatus.REJECTED)
+                && task.getTaskStatus() != TaskStatus.ALLOCATED) {
+            throw new InvalidStatusException("Cannot mark task as " + newStatus.name() + ": Current status must be ALLOCATED");
+        }
+
+        // Validation: Cannot mark as WBS_SUBMITTED if no WBS document exists
+        if (newStatus == TaskStatus.WBS_SUBMITTED
+                && !documentRepository.existsByTaskIdAndDocumentType(task.getId(), Document.DocumentType.WBS)) {
+            throw new InvalidStatusException("Cannot mark task as WBS_SUBMITTED: No WBS document has been uploaded for this task");
+        }
+
+        // Validation: Cannot mark as CONCEPT_NOTE statuses if no CONCEPT_NOTE document exists
+        if ((newStatus == TaskStatus.CONCEPT_NOTE_SUBMITTED
+                || newStatus == TaskStatus.CONCEPT_NOTE_UNDER_REVIEW
+                || newStatus == TaskStatus.CONCEPT_NOTE_APPROVED
+                || newStatus == TaskStatus.CONCEPT_NOTE_REJECTED)
+                && !documentRepository.existsByTaskIdAndDocumentType(task.getId(), Document.DocumentType.CONCEPT_NOTE)) {
+            throw new InvalidStatusException("Cannot mark task as " + newStatus.name() + ": No CONCEPT_NOTE document has been uploaded for this task");
+        }
+
+        // Validation: Cannot mark as INCEPTION_REPORT statuses if no INCEPTION_REPORT document exists
+        if ((newStatus == TaskStatus.INCEPTION_REPORT_SUBMITTED
+                || newStatus == TaskStatus.INCEPTION_REPORT_UNDER_REVIEW
+                || newStatus == TaskStatus.INCEPTION_REPORT_APPROVED
+                || newStatus == TaskStatus.INCEPTION_REPORT_REJECTED)
+                && !documentRepository.existsByTaskIdAndDocumentType(task.getId(), Document.DocumentType.INCEPTION_REPORT)) {
+            throw new InvalidStatusException("Cannot mark task as " + newStatus.name() + ": No INCEPTION_REPORT document has been uploaded for this task");
+        }
+
+        // Validation: Cannot mark as EXECUTION_UNDERWAY or COMPLETED if no WBS, CONCEPT_NOTE, or INCEPTION_REPORT exists
+        if (newStatus == TaskStatus.EXECUTION_UNDERWAY || newStatus == TaskStatus.COMPLETED) {
+            boolean hasWbs = documentRepository.existsByTaskIdAndDocumentType(task.getId(), Document.DocumentType.WBS);
+            boolean hasConceptNote = documentRepository.existsByTaskIdAndDocumentType(task.getId(), Document.DocumentType.CONCEPT_NOTE);
+            boolean hasInceptionReport = documentRepository.existsByTaskIdAndDocumentType(task.getId(), Document.DocumentType.INCEPTION_REPORT);
+
+            if (!hasWbs && !hasConceptNote && !hasInceptionReport) {
+                throw new InvalidStatusException("Cannot mark task as " + newStatus.name() + ": Task must have at least one of WBS, CONCEPT_NOTE, or INCEPTION_REPORT document");
+            }
+        }
     }
 
     @Override

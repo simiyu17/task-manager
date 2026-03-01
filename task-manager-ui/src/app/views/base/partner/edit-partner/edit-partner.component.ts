@@ -116,7 +116,7 @@ export class EditPartnerComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error updating partner:', error);
-        this.errorMessage = error.error?.message || 'Failed to update partner. Please try again.';
+        this.errorMessage = error.error?.detail || 'Failed to update partner. Please try again.';
         this.isSubmitting = false;
         this.cdr.detectChanges();
       }
