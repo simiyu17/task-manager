@@ -1,0 +1,251 @@
+<div class="task-comments-container">
+  <c-card class="mb-4">
+    <c-card-header>
+      <div class="d-flex justify-content-between align-items-center">
+        <strong>Comments & Reviews</strong>
+        <button 
+          cButton 
+          color="primary" 
+          size="sm"
+          (click)="toggleReviewForm()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus-lg me-1" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+          </svg>
+          Add Comment
+        </button>
+      </div>
+    </c-card-header>
+    <c-card-body>
+      <!-- New Review Form -->
+      @if (showReviewForm) {
+        <c-card class="mb-3 border-primary">
+          <c-card-body>
+            <h6 class="mb-3">Create New Review</h6>
+            <form cForm [formGroup]="reviewForm" (ngSubmit)="submitReview()">
+              <c-row class="mb-3">
+                <c-col md="12">
+                  <label cFormLabel for="overallComment">Overall Comment</label>
+                  <textarea 
+                    cFormControl
+                    id="overallComment" 
+                    formControlName="overallComment"
+                    rows="4"
+                    placeholder="Enter your overall comment..."></textarea>
+                </c-col>
+              </c-row>
+              <div class="d-flex gap-2">
+                <button cButton color="primary" type="submit">Submit Review</button>
+                <button cButton color="secondary" type="button" (click)="toggleReviewForm()">Cancel</button>
+              </div>
+            </form>
+          </c-card-body>
+        </c-card>
+      }
+
+      <!-- Reviews List (Latest First) -->
+      @if (isLoadingReviews) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading reviews...</span>
+          </div>
+        </div>
+      } @else if (reviews.length === 0) {
+        <div class="alert alert-info mb-0">
+          No comments or reviews yet. Click "Add Comment" to start the conversation.
+        </div>
+      } @else {
+        @for (review of reviews; track review.id) {
+          <c-card class="mb-3">
+            <c-card-header>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="badge me-2" [ngClass]="'bg-' + getStatusBadgeColor(review.reviewStatus)">
+                    {{ review.reviewStatus.replace('_', ' ') }}
+                  </span>
+                  <small class="text-muted">Review Cycle {{ review.reviewCycle }}</small>
+                </div>
+                <small class="text-muted">{{ formatDate(review.reviewedAt) }}</small>
+              </div>
+            </c-card-header>
+            <c-card-body>
+              <!-- Overall Comment -->
+              @if (review.overallComment) {
+                <div class="mb-3">
+                  <strong>Overall Comment:</strong>
+                  <p class="mb-0 ms-3">{{ review.overallComment }}</p>
+                </div>
+              }
+
+              <!-- Comments Section -->
+              <div class="comments-section mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h6 class="mb-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-left-text me-1" viewBox="0 0 16 16">
+                      <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+                      <path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6m0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>
+                    </svg>
+                    Comments ({{ review.comments.length }})
+                  </h6>
+                  <button 
+                    cButton 
+                    color="link" 
+                    size="sm"
+                    (click)="toggleCommentForm(review.id)">
+                    Add Comment
+                  </button>
+                </div>
+
+                <!-- Add Comment Form -->
+                @if (showCommentForm[review.id]) {
+                  <div class="comment-form mb-3 p-3 border rounded bg-light">
+                    <form cForm [formGroup]="commentForm" (ngSubmit)="submitComment(review.id)">
+                      <c-row class="mb-2">
+                        <c-col md="12">
+                          <textarea 
+                            cFormControl
+                            formControlName="commentText"
+                            rows="3"
+                            placeholder="Enter your comment..."
+                            [class.is-invalid]="commentForm.get('commentText')?.invalid && commentForm.get('commentText')?.touched"></textarea>
+                        </c-col>
+                      </c-row>
+                      <c-row class="mb-2">
+                        <c-col md="12">
+                          <input 
+                            cFormControl
+                            formControlName="sectionReference"
+                            placeholder="Section reference (optional)" />
+                        </c-col>
+                      </c-row>
+                      <div class="d-flex gap-2">
+                        <button cButton color="primary" size="sm" type="submit">Post Comment</button>
+                        <button cButton color="secondary" size="sm" type="button" (click)="toggleCommentForm(review.id)">Cancel</button>
+                      </div>
+                    </form>
+                  </div>
+                }
+
+                <!-- Comments List (Oldest First) -->
+                @if (review.comments.length > 0) {
+                  <div class="comments-list">
+                    @for (comment of review.comments; track comment.id) {
+                      <div class="comment-item p-3 mb-2 border rounded">
+                        <div class="d-flex justify-content-between mb-2">
+                          <strong>{{ comment.createdBy }}</strong>
+                          @if (comment.sectionReference) {
+                            <span class="badge bg-info">{{ comment.sectionReference }}</span>
+                          }
+                        </div>
+                        <p class="mb-0">{{ comment.commentText }}</p>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <p class="text-muted small mb-0">No comments yet.</p>
+                }
+              </div>
+
+              <!-- Clarifying Questions Section -->
+              <div class="questions-section">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h6 class="mb-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle me-1" viewBox="0 0 16 16">
+                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                      <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"/>
+                    </svg>
+                    Clarifying Questions ({{ review.clarifyingQuestions.length }})
+                  </h6>
+                  <button 
+                    cButton 
+                    color="link" 
+                    size="sm"
+                    (click)="toggleQuestionForm(review.id)">
+                    Ask Question
+                  </button>
+                </div>
+
+                <!-- Add Question Form -->
+                @if (showQuestionForm[review.id]) {
+                  <div class="question-form mb-3 p-3 border rounded bg-light">
+                    <form cForm [formGroup]="questionForm" (ngSubmit)="submitQuestion(review.id)">
+                      <c-row class="mb-2">
+                        <c-col md="12">
+                          <textarea 
+                            cFormControl
+                            formControlName="questionText"
+                            rows="3"
+                            placeholder="Enter your question..."
+                            [class.is-invalid]="questionForm.get('questionText')?.invalid && questionForm.get('questionText')?.touched"></textarea>
+                        </c-col>
+                      </c-row>
+                      <div class="d-flex gap-2">
+                        <button cButton color="primary" size="sm" type="submit">Post Question</button>
+                        <button cButton color="secondary" size="sm" type="button" (click)="toggleQuestionForm(review.id)">Cancel</button>
+                      </div>
+                    </form>
+                  </div>
+                }
+
+                <!-- Questions List -->
+                @if (review.clarifyingQuestions.length > 0) {
+                  <div class="questions-list">
+                    @for (question of review.clarifyingQuestions; track question.id) {
+                      <div class="question-item p-3 mb-2 border rounded" [class.border-success]="question.isAnswered">
+                        <div class="d-flex justify-content-between mb-2">
+                          <strong>{{ question.createdBy }}</strong>
+                          <span class="badge" [class.bg-success]="question.isAnswered" [class.bg-warning]="!question.isAnswered">
+                            {{ question.isAnswered ? 'Answered' : 'Pending' }}
+                          </span>
+                        </div>
+                        <p class="mb-2"><strong>Q:</strong> {{ question.questionText }}</p>
+                        
+                        @if (question.isAnswered) {
+                          <div class="answer-section mt-2 p-2 bg-light rounded">
+                            <p class="mb-1"><strong>A:</strong> {{ question.answerText }}</p>
+                            <small class="text-muted">Answered by: {{ question.answeredBy }}</small>
+                          </div>
+                        } @else {
+                          @if (!showAnswerForm[question.id]) {
+                            <button 
+                              cButton 
+                              color="link" 
+                              size="sm"
+                              class="p-0"
+                              (click)="toggleAnswerForm(question.id)">
+                              Answer this question
+                            </button>
+                          } @else {
+                            <div class="answer-form mt-2 p-3 border rounded bg-light">
+                              <form cForm [formGroup]="answerForm" (ngSubmit)="submitAnswer(question.id)">
+                                <c-row class="mb-2">
+                                  <c-col md="12">
+                                    <textarea 
+                                      cFormControl
+                                      formControlName="answerText"
+                                      rows="3"
+                                      placeholder="Enter your answer..."
+                                      [class.is-invalid]="answerForm.get('answerText')?.invalid && answerForm.get('answerText')?.touched"></textarea>
+                                  </c-col>
+                                </c-row>
+                                <div class="d-flex gap-2">
+                                  <button cButton color="success" size="sm" type="submit">Submit Answer</button>
+                                  <button cButton color="secondary" size="sm" type="button" (click)="toggleAnswerForm(question.id)">Cancel</button>
+                                </div>
+                              </form>
+                            </div>
+                          }
+                        }
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <p class="text-muted small mb-0">No questions yet.</p>
+                }
+              </div>
+            </c-card-body>
+          </c-card>
+        }
+      }
+    </c-card-body>
+  </c-card>
+</div>

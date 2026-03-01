@@ -24,6 +24,7 @@ public interface TaskMapper {
     @Mapping(target = "assignedPartner", source = "assignedPartner")
     @Mapping(target = "taskStatus", expression = "java(taskStatusToString(task.getTaskStatus()))")
     @Mapping(target = "stepValue", expression = "java(task.getTaskStatus() != null ? task.getTaskStatus().getStepValue() : null)")
+    @Mapping(target = "possibleNextStatuses", expression = "java(task.getTaskPossibleNextStatuses())")
     TaskResponseDto toResponseDto(Task task);
 
     @Mapping(target = "donor", ignore = true)
@@ -71,7 +72,7 @@ public interface TaskMapper {
     }
 
     default String taskStatusToString(TaskStatus taskStatus) {
-        return taskStatus != null ? taskStatus.name() : null;
+        return taskStatus != null ? taskStatus.getDisplayName() : null;
     }
 
     default TaskStatus stringToTaskStatus(String taskStatus) {

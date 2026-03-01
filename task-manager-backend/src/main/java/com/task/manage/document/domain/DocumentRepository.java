@@ -14,6 +14,8 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
 
     List<Document> findByTaskIdAndDocumentType(Long taskId, Document.DocumentType documentType);
 
+    boolean existsByTaskIdAndDocumentType(Long taskId, Document.DocumentType documentType);
+
     @Query("SELECT MAX(d.version) FROM Document d WHERE d.task.id = :taskId AND d.documentType = :documentType")
     Optional<Integer> findMaxVersionByTaskIdAndDocumentType(Long taskId, Document.DocumentType documentType);
 

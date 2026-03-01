@@ -1,0 +1,26 @@
+.review-task-container {
+  .comment-item,
+  .question-item {
+    background-color: #f8f9fa;
+    
+    &:hover {
+      background-color: #e9ecef;
+    }
+  }
+
+  .comment-form,
+  .question-form,
+  .answer-form {
+    background-color: #f8f9fa;
+  }
+
+  .comments-list,
+  .questions-list {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  .answer-section {
+    border-left: 3px solid #198754;
+  }
+}

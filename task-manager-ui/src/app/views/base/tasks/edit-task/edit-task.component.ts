@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TasksStepperComponent } from '../tasks-stepper/tasks-stepper.component';
+import { TasksStepperComponent } from '../tasks-stepper.component';
 import { TaskService } from '../../../../services/task/task.service';
 
 @Component({

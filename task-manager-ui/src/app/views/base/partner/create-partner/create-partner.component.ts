@@ -84,7 +84,7 @@ export class CreatePartnerComponent {
       },
       error: (error) => {
         console.error('Error creating partner:', error);
-        this.errorMessage = error.error?.message || 'Failed to create partner. Please try again.';
+        this.errorMessage = error.error?.detail || 'Failed to create partner. Please try again.';
         this.isSubmitting = false;
         this.cdr.detectChanges();
       }

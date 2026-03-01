@@ -14,7 +14,7 @@ import {
   FormLabelDirective,
   ButtonDirective
 } from '@coreui/angular';
-import { TaskService } from '../../../../../services/task/task.service';
+import { TaskService } from '../../../../services/task/task.service';
 
 @Component({
   selector: 'app-task-acceptance',

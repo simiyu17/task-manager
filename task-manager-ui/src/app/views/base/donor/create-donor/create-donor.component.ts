@@ -86,7 +86,7 @@ export class CreateDonorComponent {
       },
       error: (error) => {
         console.error('Error creating donor:', error);
-        this.errorMessage = error.error?.message || 'Failed to create donor. Please try again.';
+        this.errorMessage = error.error?.detail || 'Failed to create donor. Please try again.';
         this.isSubmitting = false;
         this.cdr.detectChanges();
       }

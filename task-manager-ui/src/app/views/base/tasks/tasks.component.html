@@ -12,7 +12,7 @@
               cButton 
               color="primary"
               size="sm"
-              routerLink="/base/tasks/initiate-task">
+              (click)="openInitiateTaskModal()">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg me-1" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
               </svg>
@@ -128,3 +128,35 @@
     </c-card>
   </c-col>
 </c-row>
+
+<!-- Initiate Task Modal -->
+<c-modal 
+  size="lg"
+  [visible]="initiateTaskModalVisible" 
+  (visibleChange)="handleInitiateTaskModalChange($event)"
+  backdrop="static">
+  <c-modal-header>
+    <h5 cModalTitle>Initiate New Task</h5>
+    <button cButtonClose (click)="closeInitiateTaskModal()"></button>
+  </c-modal-header>
+  <c-modal-body>
+    <app-initiate-task 
+      [readonlyMode]="false"
+      (taskCreated)="onTaskCreated($event)">
+    </app-initiate-task>
+  </c-modal-body>
+  <c-modal-footer>
+    <button 
+      cButton 
+      color="secondary" 
+      (click)="cancelInitiateTask()">
+      Cancel
+    </button>
+    <button 
+      cButton 
+      color="primary" 
+      (click)="submitInitiateTask()">
+      Submit
+    </button>
+  </c-modal-footer>
+</c-modal>

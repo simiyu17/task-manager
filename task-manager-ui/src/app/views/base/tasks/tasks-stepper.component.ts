@@ -15,8 +15,8 @@ import { UploadTaskDocumentComponent } from './upload-task-document/upload-task-
 import { ReviewTaskComponent } from './review-task/review-task.component';
 import { AllocateTaskComponent } from './allocate-task/allocate-task.component';
 import { TaskAcceptanceComponent } from './task-acceptance/task-acceptance.component';
-import { TaskRequestDto } from '../dto/task-request-dto';
-import { TaskService } from '../../../../services/task/task.service';
+import { TaskRequestDto } from './dto/task-request-dto';
+import { TaskService } from '../../../services/task/task.service';
 
 interface Step {
   id: number;
@@ -426,7 +426,7 @@ export class TasksStepperComponent implements AfterViewInit, OnInit {
       },
       error: (error) => {
         this.isSubmitting = false;
-        const errorMessage = error.error?.message || 'Failed to update task status. Please try again.';
+        const errorMessage = error.error?.detail || 'Failed to update task status. Please try again.';
         console.error('Error updating task status:', error);
         alert(errorMessage);
         this.cdr.detectChanges();

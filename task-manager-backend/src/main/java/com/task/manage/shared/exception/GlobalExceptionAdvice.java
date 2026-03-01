@@ -4,7 +4,9 @@ import com.task.manage.document.exception.DocumentNotFoundException;
 import com.task.manage.document.exception.FileNotFoundException;
 import com.task.manage.document.exception.FileStorageException;
 import com.task.manage.document.exception.InvalidFileException;
+import com.task.manage.donor.exception.DonorNotFoundException;
 import com.task.manage.partner.exception.PartnerNotFoundException;
+import com.task.manage.task.exception.InvalidStatusException;
 import com.task.manage.task.exception.QuestionNotFoundException;
 import com.task.manage.task.exception.ReviewNotFoundException;
 import com.task.manage.task.exception.TaskAlreadyExistsException;
@@ -44,11 +46,29 @@ public class GlobalExceptionAdvice {
         return problemDetail;
     }
 
+    @ExceptionHandler(InvalidStatusException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ProblemDetail handleInvalidStatusException(InvalidStatusException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problemDetail.setTitle("Invalid Status Transition");
+        problemDetail.setProperty(TIME_STAMP, Instant.now());
+        return problemDetail;
+    }
+
     @ExceptionHandler(PartnerNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ProblemDetail handlePartnerNotFoundException(PartnerNotFoundException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problemDetail.setTitle("Partner Not Found");
+        problemDetail.setProperty(TIME_STAMP, Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(DonorNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ProblemDetail handleDonorNotFoundException(DonorNotFoundException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problemDetail.setTitle("Donor Not Found");
         problemDetail.setProperty(TIME_STAMP, Instant.now());
         return problemDetail;
     }

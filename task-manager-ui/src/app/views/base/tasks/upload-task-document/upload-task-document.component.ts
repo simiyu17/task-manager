@@ -9,7 +9,7 @@ import {
   FormFeedbackComponent,
   FormSelectDirective
 } from '@coreui/angular';
-import { DocumentService } from '../../../../../services/document/document.service';
+import { DocumentService } from '../../../../services/document/document.service';
 
 interface DocumentType {
   value: string;
@@ -193,7 +193,7 @@ export class UploadTaskDocumentComponent implements OnInit {
       },
       error: (error) => {
         this.isSubmitting = false;
-        this.errorMessage = error.error?.message || 'Failed to upload document. Please try again.';
+        this.errorMessage = error.error?.detail || 'Failed to upload document. Please try again.';
         this.documentUploaded.emit({ success: false });
       }
     });

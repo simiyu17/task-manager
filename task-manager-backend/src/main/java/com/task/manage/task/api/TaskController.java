@@ -8,10 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -78,10 +81,83 @@ public class TaskController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/{taskId}/next-status")
-    public ResponseEntity<TaskResponseDto> moveTaskToNextStatus(
-            @PathVariable Long taskId, @RequestParam Boolean isRejected) {
-        TaskResponseDto response = taskService.moveTaskToNextStatus(taskId, isRejected);
+    @PatchMapping("/{taskId}/title")
+    public ResponseEntity<TaskResponseDto> updateTitle(
+            @PathVariable Long taskId,
+            @RequestParam String title) {
+        TaskResponseDto response = taskService.updateTitle(taskId, title);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{taskId}/donor/{donorId}")
+    public ResponseEntity<TaskResponseDto> updateDonor(
+            @PathVariable Long taskId,
+            @PathVariable Long donorId) {
+        TaskResponseDto response = taskService.updateDonor(taskId, donorId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{taskId}/description")
+    public ResponseEntity<TaskResponseDto> updateDescription(
+            @PathVariable Long taskId,
+            @RequestParam String description) {
+        TaskResponseDto response = taskService.updateDescription(taskId, description);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{taskId}/validated-budget")
+    public ResponseEntity<TaskResponseDto> updateValidatedBudget(
+            @PathVariable Long taskId,
+            @RequestParam BigDecimal validatedBudget) {
+        TaskResponseDto response = taskService.updateValidatedBudget(taskId, validatedBudget);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{taskId}/request-received-at")
+    public ResponseEntity<TaskResponseDto> updateRequestReceivedAt(
+            @PathVariable Long taskId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime requestReceivedAt) {
+        TaskResponseDto response = taskService.updateRequestReceivedAt(taskId, requestReceivedAt);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{taskId}/accepted-at")
+    public ResponseEntity<TaskResponseDto> updateAcceptedAt(
+            @PathVariable Long taskId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime acceptedAt) {
+        TaskResponseDto response = taskService.updateAcceptedAt(taskId, acceptedAt);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{taskId}/deadline")
+    public ResponseEntity<TaskResponseDto> updateDeadline(
+            @PathVariable Long taskId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime deadline) {
+        TaskResponseDto response = taskService.updateDeadline(taskId, deadline);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{taskId}/allocate-notes")
+    public ResponseEntity<TaskResponseDto> updateAllocateNotes(
+            @PathVariable Long taskId,
+            @RequestParam String allocateNotes) {
+        TaskResponseDto response = taskService.updateAllocateNotes(taskId, allocateNotes);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{taskId}/acceptance-notes")
+    public ResponseEntity<TaskResponseDto> updateAcceptanceNotes(
+            @PathVariable Long taskId,
+            @RequestParam String acceptanceNotes) {
+        TaskResponseDto response = taskService.updateAcceptanceNotes(taskId, acceptanceNotes);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{taskId}/rejection-notes")
+    public ResponseEntity<TaskResponseDto> updateRejectionNotes(
+            @PathVariable Long taskId,
+            @RequestParam String rejectionNotes) {
+        TaskResponseDto response = taskService.updateRejectionNotes(taskId, rejectionNotes);
         return ResponseEntity.ok(response);
     }
 }

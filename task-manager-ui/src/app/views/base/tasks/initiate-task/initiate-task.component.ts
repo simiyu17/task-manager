@@ -10,9 +10,9 @@ import {
   FormFeedbackComponent,
   FormSelectDirective
 } from '@coreui/angular';
-import { TaskRequestDto } from '../../dto/task-request-dto';
-import { TaskService } from '../../../../../services/task/task.service';
-import { DonorService, DonorResponseDto } from '../../../../../services/donor/donor.service';
+import { TaskRequestDto } from '../dto/task-request-dto';
+import { TaskService } from '../../../../services/task/task.service';
+import { DonorService, DonorResponseDto } from '../../../../services/donor/donor.service';
 
 @Component({
   selector: 'app-initiate-task',
@@ -153,7 +153,7 @@ export class InitiateTaskComponent implements OnInit {
       },
       error: (error) => {
         this.isSubmitting = false;
-        this.errorMessage = error.error?.message || `Failed to ${this.taskId ? 'update' : 'create'} task. Please try again.`;
+        this.errorMessage = error.error?.detail || `Failed to ${this.taskId ? 'update' : 'create'} task. Please try again.`;
         this.taskCreated.emit({ success: false, data: formData }); // Emit data even on failure to preserve form
       }
     });
