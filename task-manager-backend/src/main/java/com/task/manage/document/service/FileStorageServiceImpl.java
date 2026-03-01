@@ -48,16 +48,12 @@ public class FileStorageServiceImpl implements FileStorageService {
                 throw new InvalidFileException("Invalid path sequence in filename: " + originalFileName);
             }
 
-            // Generate a unique filename
-            String fileExtension = getFileExtension(originalFileName);
-            String fileName = String.format("task_%d_%s_v%d.%s", taskId, documentType, version, fileExtension);
-
             // Create task-specific directory
             Path taskDirectory = this.fileStorageLocation.resolve("task_" + taskId);
             Files.createDirectories(taskDirectory);
 
             // Copy file to the target location (Replacing existing file with the same name)
-            Path targetLocation = taskDirectory.resolve(fileName);
+            Path targetLocation = taskDirectory.resolve(originalFileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
             log.info("File stored successfully: {}", targetLocation);

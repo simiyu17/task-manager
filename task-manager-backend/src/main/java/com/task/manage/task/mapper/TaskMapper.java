@@ -72,7 +72,7 @@ public interface TaskMapper {
     }
 
     default String taskStatusToString(TaskStatus taskStatus) {
-        return taskStatus != null ? taskStatus.name() : null;
+        return taskStatus != null ? taskStatus.getDisplayName() : null;
     }
 
     default TaskStatus stringToTaskStatus(String taskStatus) {
