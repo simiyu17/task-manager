@@ -196,45 +196,6 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskResponseDto moveTaskToNextStatus(Long taskId, Boolean rejected) {
-        log.info("Moving task {} to next status", taskId);
-
-        // Find task
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new TaskNotFoundException(taskId));
-
-        TaskStatus currentStatus = task.getTaskStatus();
-        TaskStatus nextStatus = getNextStatus(currentStatus, rejected);
-
-        if (nextStatus == null) {
-            throw new IllegalStateException("Task is already in final status: " + currentStatus);
-        }
-
-        task.setTaskStatus(nextStatus);
-        Task updatedTask = taskRepository.save(task);
-        log.info("Task moved from {} to {}", currentStatus, nextStatus);
-
-        return taskMapper.toResponseDto(updatedTask);
-    }
-
-    private TaskStatus getNextStatus(TaskStatus currentStatus, boolean rejected) {
-        return switch (currentStatus) {
-            case INITIATED -> TaskStatus.TASK_UNDER_REVIEW;
-            case TASK_UNDER_REVIEW -> TaskStatus.REVIEW_COMPLETED;
-            case REVIEW_COMPLETED, REJECTED -> TaskStatus.ALLOCATED;
-            case ALLOCATED -> rejected ? TaskStatus.REJECTED : TaskStatus.ACCEPTED;
-            case ACCEPTED -> TaskStatus.WBS_SUBMITTED;
-            case WBS_SUBMITTED -> TaskStatus.CN_DRAFTING;
-            case CN_DRAFTING, CN_REJECTED -> TaskStatus.CN_UNDER_REVIEW;
-            case CN_UNDER_REVIEW -> rejected ? TaskStatus.CN_REJECTED : TaskStatus.CN_APPROVED;
-            case CN_APPROVED -> TaskStatus.INCEPTION_REPORT_PENDING;
-            case INCEPTION_REPORT_PENDING -> TaskStatus.EXECUTION;
-            case EXECUTION -> TaskStatus.COMPLETED;
-            case COMPLETED -> null; // Final status
-        };
-    }
-
-    @Override
     public TaskResponseDto updateTitle(Long taskId, String title) {
         log.info("Updating title of task {} to {}", taskId, title);
 

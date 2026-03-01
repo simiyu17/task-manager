@@ -27,8 +27,6 @@ public interface TaskService {
 
     TaskResponseDto updateTaskStatus(Long taskId, String status);
 
-    TaskResponseDto moveTaskToNextStatus(Long taskId, Boolean rejected);
-
     // Patch methods for individual fields
     TaskResponseDto updateTitle(Long taskId, String title);
 

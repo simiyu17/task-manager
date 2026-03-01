@@ -81,13 +81,6 @@ public class TaskController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/{taskId}/next-status")
-    public ResponseEntity<TaskResponseDto> moveTaskToNextStatus(
-            @PathVariable Long taskId, @RequestParam Boolean isRejected) {
-        TaskResponseDto response = taskService.moveTaskToNextStatus(taskId, isRejected);
-        return ResponseEntity.ok(response);
-    }
-
     @PatchMapping("/{taskId}/title")
     public ResponseEntity<TaskResponseDto> updateTitle(
             @PathVariable Long taskId,

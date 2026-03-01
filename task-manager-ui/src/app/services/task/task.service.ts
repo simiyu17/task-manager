@@ -4,6 +4,11 @@ import { ApiService } from '../api.service';
 import { TaskRequestDto } from '../../views/base/tasks/dto/task-request-dto';
 import { DonorResponseDto } from '../donor/donor.service';
 
+export interface TaskStatusOption {
+  statusCode: string;
+  statusDisplayName: string;
+}
+
 export interface TaskResponse {
   id: number;
   title: string;
@@ -25,6 +30,7 @@ export interface TaskResponse {
   progress?: number;
   priority?: string;
   stepValue: number;
+  possibleNextStatuses: TaskStatusOption[];
 }
 
 export interface PartnerResponseDto {
@@ -176,19 +182,6 @@ export class TaskService {
       `${this.TASKS_ENDPOINT}/${taskId}/status`,
       null,
       { params: { status } }
-    );
-  }
-
-  /**
-   * Move task to next status in workflow
-   * @param taskId - Task ID
-   * @param reject - Whether to reject the task
-   */
-  moveTaskToNextStatus(taskId: string, reject: boolean = false): Observable<TaskResponse> {
-    return this.apiService.patch<TaskResponse>(
-      `${this.TASKS_ENDPOINT}/${taskId}/next-status`,
-      null,
-      { params: { isRejected: reject.toString() } }
     );
   }
 }

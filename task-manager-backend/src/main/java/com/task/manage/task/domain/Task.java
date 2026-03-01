@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.task.manage.donor.domain.Donor;
 import com.task.manage.partner.domain.Partner;
 import com.task.manage.shared.domain.BaseEntity;
+import com.task.manage.task.dto.TaskStatusDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -21,6 +22,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "tasks", uniqueConstraints = { @UniqueConstraint(columnNames = { "title" }, name = "TITLE_UNIQUE")})
@@ -68,6 +71,13 @@ public class Task extends BaseEntity {
     @Column(name = "rejection_notes", columnDefinition = "TEXT")
     private String rejectionNotes;
 
+    public List<TaskStatusDto> getTaskPossibleNextStatuses() {
+        return Stream.of(TaskStatus.values())
+                .filter(status -> !status.equals(this.taskStatus))
+                .map(status -> new TaskStatusDto(status.getStepValue(), status.name(), status.getDisplayName()))
+                .toList();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -93,9 +103,11 @@ public class Task extends BaseEntity {
 
     @Getter
     public enum TaskStatus {
-        INITIATED(2), TASK_UNDER_REVIEW(3), REVIEW_COMPLETED(4), ALLOCATED(5), ACCEPTED(6), REJECTED(6), WBS_SUBMITTED(7),
-        CN_DRAFTING(8), CN_UNDER_REVIEW(9), CN_APPROVED(10), CN_REJECTED(10),
-        INCEPTION_REPORT_PENDING(11), EXECUTION(12), COMPLETED(13);
+        INITIATED(1), TASK_UNDER_REVIEW(2), ALLOCATED(3), ACCEPTED(4), REJECTED(5),
+        WBS_SUBMITTED(6),
+        CONCEPT_NOTE_SUBMITTED(7), CONCEPT_NOTE_UNDER_REVIEW(8), CONCEPT_NOTE_APPROVED(9), CONCEPT_NOTE_REJECTED(10),
+        INCEPTION_REPORT_SUBMITTED(11), INCEPTION_REPORT_UNDER_REVIEW(12), INCEPTION_REPORT_APPROVED(13), INCEPTION_REPORT_REJECTED(14),
+        EXECUTION(15), COMPLETED(16);
 
         private final Integer stepValue;
 
@@ -109,7 +121,7 @@ public class Task extends BaseEntity {
         }
 
         public String getDisplayName() {
-            return this.name().charAt(0) + this.name().substring(1).toLowerCase().replace('_', ' ');
+            return this.name().replace('_', ' ');
         }
 
         /**

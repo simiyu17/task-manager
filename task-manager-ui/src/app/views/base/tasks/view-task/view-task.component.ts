@@ -24,6 +24,7 @@ import { TaskService, TaskResponse } from '../../../../services/task/task.servic
 import { DocumentService, DocumentResponseDto } from '../../../../services/document/document.service';
 import { TaskCommentsComponent } from '../task-comments/task-comments.component';
 import { UploadTaskDocumentComponent } from '../upload-task-document/upload-task-document.component';
+import { UpdateTaskStatusComponent } from '../update-task-status/update-task-status.component';
 
 @Component({
   selector: 'app-view-task',
@@ -48,7 +49,8 @@ import { UploadTaskDocumentComponent } from '../upload-task-document/upload-task
     ModalFooterComponent,
     ButtonCloseDirective,
     TaskCommentsComponent,
-    UploadTaskDocumentComponent
+    UploadTaskDocumentComponent,
+    UpdateTaskStatusComponent
   ],
   providers: [DatePipe],
   templateUrl: './view-task.component.html',
@@ -56,6 +58,7 @@ import { UploadTaskDocumentComponent } from '../upload-task-document/upload-task
 })
 export class ViewTaskComponent implements OnInit {
   @ViewChild('uploadDocumentComponent') uploadDocumentComponent!: UploadTaskDocumentComponent;
+  @ViewChild('updateStatusComponent') updateStatusComponent!: UpdateTaskStatusComponent;
 
   taskId: number = 0;
   task: TaskResponse | null = null;
@@ -64,6 +67,7 @@ export class ViewTaskComponent implements OnInit {
   isLoadingDocuments = true;
   errorMessage = '';
   uploadDocumentModalVisible = false;
+  updateStatusModalVisible = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -146,7 +150,29 @@ export class ViewTaskComponent implements OnInit {
   }
 
   onUpdateProgress(): void {
-    this.router.navigate(['/base/tasks', this.taskId, 'update-progress']);
+    this.updateStatusModalVisible = true;
+  }
+
+  closeUpdateStatusModal(): void {
+    this.updateStatusModalVisible = false;
+  }
+
+  handleUpdateStatusModalChange(event: boolean): void {
+    this.updateStatusModalVisible = event;
+  }
+
+  onStatusUpdated(event: { success: boolean; message?: string }): void {
+    if (event.success) {
+      this.closeUpdateStatusModal();
+      this.loadTask(); // Reload task to get updated status
+      console.log('Task status updated successfully');
+    }
+  }
+
+  submitUpdateStatus(): void {
+    if (this.updateStatusComponent) {
+      this.updateStatusComponent.onSubmit();
+    }
   }
 
   onCancelTask(): void {

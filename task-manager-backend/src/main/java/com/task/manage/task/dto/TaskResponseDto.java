@@ -6,6 +6,7 @@ import com.task.manage.partner.dto.PartnerResponseDto;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record TaskResponseDto(
         Long id,
@@ -25,6 +26,7 @@ public record TaskResponseDto(
         Instant lastModified,
         String createdBy,
         String lastModifiedBy,
-        Integer stepValue
+        Integer stepValue,
+        List<TaskStatusDto> possibleNextStatuses
 ) {
 }
