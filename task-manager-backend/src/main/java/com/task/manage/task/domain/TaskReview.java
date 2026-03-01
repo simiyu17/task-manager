@@ -1,6 +1,5 @@
 package com.task.manage.task.domain;
 
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.task.manage.shared.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,7 +24,7 @@ public class TaskReview extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "review_status", nullable = false)
-    private ReviewStatus reviewStatus;
+    private Task.TaskStatus reviewStatus;
 
     @Column(name = "review_cycle")
     private Integer reviewCycle;
@@ -56,36 +55,5 @@ public class TaskReview extends BaseEntity {
                 .append(task)
                 .append(reviewCycle)
                 .toHashCode();
-    }
-
-    @Getter
-    public enum ReviewStatus {
-        PENDING, IN_PROGRESS, APPROVED, REJECTED, REQUIRES_CLARIFICATION;
-
-        @JsonValue
-        public String getName() {
-            return this.name();
-        }
-
-        public String getDisplayName() {
-            return this.name().charAt(0) + this.name().substring(1).toLowerCase().replace('_', ' ');
-        }
-
-        /**
-         * Get ReviewStatus from string value (case-insensitive)
-         * @param value the string value
-         * @return ReviewStatus or null if not found
-         */
-        public static ReviewStatus fromString(String value) {
-            if (value == null) {
-                return null;
-            }
-            for (ReviewStatus status : ReviewStatus.values()) {
-                if (status.name().equalsIgnoreCase(value)) {
-                    return status;
-                }
-            }
-            return null;
-        }
     }
 }

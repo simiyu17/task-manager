@@ -2,6 +2,11 @@ spring:
   application:
     name: task-manage-backend
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
   datasource:
     url: jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:5433}/${POSTGRESQL_DATABASE:task_manager_db}
     username: ${POSTGRESQL_USER:root}

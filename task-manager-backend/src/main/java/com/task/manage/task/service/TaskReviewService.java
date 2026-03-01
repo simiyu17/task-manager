@@ -38,7 +38,7 @@ public class TaskReviewService {
                 .orElseThrow(() -> new TaskNotFoundException(requestDto.taskId()));
 
         // Convert string to enum
-        TaskReview.ReviewStatus reviewStatus = TaskReview.ReviewStatus.fromString(requestDto.reviewStatus());
+        var reviewStatus = Task.TaskStatus.fromString(requestDto.reviewStatus());
         if (reviewStatus == null) {
             throw new IllegalArgumentException("Invalid review status: " + requestDto.reviewStatus());
         }
@@ -83,7 +83,7 @@ public class TaskReviewService {
         return toResponseDtoWithChildren(review);
     }
 
-    public TaskReviewResponseDto updateReviewStatus(Long reviewId, TaskReview.ReviewStatus status) {
+    public TaskReviewResponseDto updateReviewStatus(Long reviewId, Task.TaskStatus status) {
         log.info("Updating review status for id: {} to {}", reviewId, status);
 
         TaskReview review = taskReviewRepository.findById(reviewId)

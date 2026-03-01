@@ -1,6 +1,6 @@
 package com.task.manage.task.api;
 
-import com.task.manage.task.domain.TaskReview;
+import com.task.manage.task.domain.Task;
 import com.task.manage.task.dto.*;
 import com.task.manage.task.service.TaskReviewService;
 import jakarta.validation.Valid;
@@ -42,7 +42,7 @@ public class TaskReviewController {
     public ResponseEntity<TaskReviewResponseDto> updateReviewStatus(
             @PathVariable Long reviewId,
             @RequestParam String status) {
-        TaskReview.ReviewStatus reviewStatus = TaskReview.ReviewStatus.fromString(status);
+        var reviewStatus = Task.TaskStatus.fromString(status);
         if (reviewStatus == null) {
             throw new IllegalArgumentException("Invalid review status: " + status);
         }

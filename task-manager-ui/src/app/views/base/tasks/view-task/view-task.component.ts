@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -7,11 +7,23 @@ import {
   ButtonDirective,
   AccordionComponent,
   AccordionItemComponent,
-  TemplateIdDirective
+  TemplateIdDirective,
+  DropdownComponent,
+  DropdownToggleDirective,
+  DropdownMenuDirective,
+  DropdownItemDirective,
+  DropdownDividerDirective,
+  ModalComponent,
+  ModalHeaderComponent,
+  ModalTitleDirective,
+  ModalBodyComponent,
+  ModalFooterComponent,
+  ButtonCloseDirective
 } from '@coreui/angular';
 import { TaskService, TaskResponse } from '../../../../services/task/task.service';
 import { DocumentService, DocumentResponseDto } from '../../../../services/document/document.service';
 import { TaskCommentsComponent } from '../task-comments/task-comments.component';
+import { UploadTaskDocumentComponent } from '../upload-task-document/upload-task-document.component';
 
 @Component({
   selector: 'app-view-task',
@@ -24,19 +36,34 @@ import { TaskCommentsComponent } from '../task-comments/task-comments.component'
     AccordionComponent,
     AccordionItemComponent,
     TemplateIdDirective,
-    TaskCommentsComponent
+    DropdownComponent,
+    DropdownToggleDirective,
+    DropdownMenuDirective,
+    DropdownItemDirective,
+    DropdownDividerDirective,
+    ModalComponent,
+    ModalHeaderComponent,
+    ModalTitleDirective,
+    ModalBodyComponent,
+    ModalFooterComponent,
+    ButtonCloseDirective,
+    TaskCommentsComponent,
+    UploadTaskDocumentComponent
   ],
   providers: [DatePipe],
   templateUrl: './view-task.component.html',
   styleUrl: './view-task.component.scss'
 })
 export class ViewTaskComponent implements OnInit {
+  @ViewChild('uploadDocumentComponent') uploadDocumentComponent!: UploadTaskDocumentComponent;
+
   taskId: number = 0;
   task: TaskResponse | null = null;
   documents: DocumentResponseDto[] = [];
   isLoadingTask = true;
   isLoadingDocuments = true;
   errorMessage = '';
+  uploadDocumentModalVisible = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -172,5 +199,60 @@ export class ViewTaskComponent implements OnInit {
 
   getDocumentTypes(): string[] {
     return Object.keys(this.getDocumentsByType()).sort();
+  }
+
+  onUploadDocuments(): void {
+    this.uploadDocumentModalVisible = true;
+  }
+
+  closeUploadDocumentModal(): void {
+    this.uploadDocumentModalVisible = false;
+  }
+
+  handleUploadDocumentModalChange(event: boolean): void {
+    this.uploadDocumentModalVisible = event;
+  }
+
+  onDocumentUploaded(event: { success: boolean; message?: string }): void {
+    if (event.success) {
+      this.closeUploadDocumentModal();
+      this.loadDocuments(); // Reload documents to show the newly uploaded one
+      // Optionally show success message
+      console.log('Document uploaded successfully');
+    }
+  }
+
+  submitUploadDocument(): void {
+    if (this.uploadDocumentComponent) {
+      this.uploadDocumentComponent.onSubmit();
+    }
+  }
+
+  onAddParticipant(): void {
+    // TODO: Implement add participant functionality
+    console.log('Add participant to task:', this.taskId);
+    alert('Add participant functionality not yet implemented');
+  }
+
+  onCloneTask(): void {
+    if (confirm('Are you sure you want to clone this task?')) {
+      // TODO: Implement clone task API call
+      console.log('Clone task:', this.taskId);
+      alert('Clone task functionality not yet implemented');
+    }
+  }
+
+  onDeleteTask(): void {
+    if (confirm('Are you sure you want to delete this task? This action cannot be undone.')) {
+      // TODO: Implement delete task API call
+      console.log('Delete task:', this.taskId);
+      alert('Delete task functionality not yet implemented');
+    }
+  }
+
+  onExportTask(): void {
+    // TODO: Implement export task functionality
+    console.log('Export task:', this.taskId);
+    alert('Export task functionality not yet implemented');
   }
 }

@@ -24,25 +24,6 @@
             <form cForm [formGroup]="reviewForm" (ngSubmit)="submitReview()">
               <c-row class="mb-3">
                 <c-col md="12">
-                  <label cFormLabel for="reviewStatus">Review Status <span class="text-danger">*</span></label>
-                  <select 
-                    cFormControl
-                    cSelect
-                    id="reviewStatus" 
-                    formControlName="reviewStatus"
-                    [class.is-invalid]="reviewForm.get('reviewStatus')?.invalid && reviewForm.get('reviewStatus')?.touched">
-                    <option value="">Select status</option>
-                    @for (status of reviewStatuses; track status) {
-                      <option [value]="status">{{ status.replace('_', ' ') }}</option>
-                    }
-                  </select>
-                  @if (reviewForm.get('reviewStatus')?.invalid && reviewForm.get('reviewStatus')?.touched) {
-                    <div class="invalid-feedback d-block">Review status is required</div>
-                  }
-                </c-col>
-              </c-row>
-              <c-row class="mb-3">
-                <c-col md="12">
                   <label cFormLabel for="overallComment">Overall Comment</label>
                   <textarea 
                     cFormControl

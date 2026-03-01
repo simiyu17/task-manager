@@ -19,8 +19,7 @@ import {
   TaskReviewRequestDto,
   ReviewCommentRequestDto,
   ClarifyingQuestionRequestDto,
-  AnswerQuestionRequestDto,
-  ReviewStatus
+  AnswerQuestionRequestDto
 } from '../../../../services/review/review-dtos';
 
 @Component({
@@ -45,6 +44,7 @@ import {
 })
 export class TaskCommentsComponent implements OnInit {
   @Input() taskId!: number;
+  @Input() taskStatus!: string;
   @Output() reviewSaved = new EventEmitter<void>();
 
   reviews: TaskReviewResponseDto[] = [];
@@ -61,7 +61,6 @@ export class TaskCommentsComponent implements OnInit {
   showQuestionForm: { [key: number]: boolean } = {};
   showAnswerForm: { [key: number]: boolean } = {};
   
-  reviewStatuses = Object.values(ReviewStatus);
   createdBy = 'Current User'; // TODO: Get from auth service
 
   constructor(
@@ -69,7 +68,6 @@ export class TaskCommentsComponent implements OnInit {
     private reviewService: ReviewService
   ) {
     this.reviewForm = this.fb.group({
-      reviewStatus: ['', Validators.required],
       overallComment: ['']
     });
 
@@ -130,7 +128,7 @@ export class TaskCommentsComponent implements OnInit {
 
     const reviewRequest: TaskReviewRequestDto = {
       taskId: this.taskId,
-      reviewStatus: this.reviewForm.value.reviewStatus,
+      reviewStatus: this.taskStatus,
       overallComment: this.reviewForm.value.overallComment || undefined
     };
 

@@ -1,5 +1,6 @@
 package com.task.manage.task.mapper;
 
+import com.task.manage.task.domain.Task;
 import com.task.manage.task.domain.TaskReview;
 import com.task.manage.task.dto.TaskReviewResponseDto;
 import org.mapstruct.Mapper;
@@ -19,7 +20,7 @@ public interface TaskReviewMapper {
     @Mapping(target = "clarifyingQuestions", ignore = true)
     TaskReviewResponseDto toResponseDto(TaskReview review);
 
-    default String reviewStatusToString(TaskReview.ReviewStatus reviewStatus) {
+    default String reviewStatusToString(Task.TaskStatus reviewStatus) {
         return reviewStatus != null ? reviewStatus.name() : null;
     }
 }
