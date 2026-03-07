@@ -23,6 +23,7 @@ import {
 import { TaskService, TaskResponse } from '../../../../services/task/task.service';
 import { DocumentService, DocumentResponseDto } from '../../../../services/document/document.service';
 import { TaskCommentsComponent } from '../task-comments/task-comments.component';
+import { TaskStatusHistoryComponent } from '../task-status-history/task-status-history.component';
 import { UploadTaskDocumentComponent } from '../upload-task-document/upload-task-document.component';
 import { UpdateTaskStatusComponent } from '../update-task-status/update-task-status.component';
 import { AllocateTaskComponent } from '../allocate-task/allocate-task.component';
@@ -50,6 +51,7 @@ import { AllocateTaskComponent } from '../allocate-task/allocate-task.component'
     ModalFooterComponent,
     ButtonCloseDirective,
     TaskCommentsComponent,
+    TaskStatusHistoryComponent,
     UploadTaskDocumentComponent,
     UpdateTaskStatusComponent,
     AllocateTaskComponent
@@ -72,6 +74,7 @@ export class ViewTaskComponent implements OnInit {
   uploadDocumentModalVisible = false;
   updateStatusModalVisible = false;
   assignTaskModalVisible = false;
+  selectedTaskActivityTab: 'comments' | 'history' = 'comments';
 
   constructor(
     private route: ActivatedRoute,
@@ -304,5 +307,9 @@ export class ViewTaskComponent implements OnInit {
     // TODO: Implement export task functionality
     console.log('Export task:', this.taskId);
     alert('Export task functionality not yet implemented');
+  }
+
+  setTaskActivityTab(tab: 'comments' | 'history'): void {
+    this.selectedTaskActivityTab = tab;
   }
 }
