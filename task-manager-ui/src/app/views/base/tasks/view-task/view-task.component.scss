@@ -43,6 +43,11 @@
   }
 }
 
+.task-activity-toggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
 // Documents table
 .documents-table {
   font-size: 0.875rem;

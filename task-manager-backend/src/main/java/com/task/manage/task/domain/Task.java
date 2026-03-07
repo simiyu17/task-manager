@@ -5,15 +5,7 @@ import com.task.manage.donor.domain.Donor;
 import com.task.manage.partner.domain.Partner;
 import com.task.manage.shared.domain.BaseEntity;
 import com.task.manage.task.dto.TaskStatusDto;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,6 +14,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -71,6 +65,46 @@ public class Task extends BaseEntity {
 
     @Column(name = "rejection_notes", columnDefinition = "TEXT")
     private String rejectionNotes;
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TaskStatusHistory> statusHistory = new ArrayList<>();
+
+    /**
+     * Change task status and record the change in history
+     * @param newStatus The new status to change to
+     * @param changedBy The user making the change
+     * @param notes Optional notes about the status change
+     */
+    public void changeStatus(TaskStatus newStatus, String changedBy, String notes) {
+        if (this.taskStatus != newStatus) {
+            TaskStatusHistory history = new TaskStatusHistory(this, this.taskStatus, newStatus, changedBy);
+            history.setNotes(notes);
+
+            // Calculate duration in previous status
+            if (this.taskStatus != null) {
+                LocalDateTime lastChangeTime = getLastStatusChangeTime();
+                if (lastChangeTime != null) {
+                    long hours = ChronoUnit.HOURS.between(lastChangeTime, LocalDateTime.now());
+                    history.setDurationInPreviousStatusHours(hours);
+                }
+            }
+
+            this.statusHistory.add(history);
+            this.taskStatus = newStatus;
+        }
+    }
+
+    /**
+     * Get the timestamp of the last status change
+     */
+    private LocalDateTime getLastStatusChangeTime() {
+        if (statusHistory.isEmpty()) {
+            return this.getDateCreated() != null ?
+                LocalDateTime.ofInstant(this.getDateCreated(), java.time.ZoneId.systemDefault()) :
+                LocalDateTime.now();
+        }
+        return statusHistory.getLast().getChangedAt();
+    }
 
     public List<TaskStatusDto> getTaskPossibleNextStatuses() {
         return Stream.of(TaskStatus.values())

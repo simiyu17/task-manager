@@ -4,4 +4,13 @@
       font-size: x-small;
     }
   }
+
+  .widget-dark-text-white {
+    ::ng-deep {
+      .card-body,
+      .card-body * {
+        color: white !important;
+      }
+    }
+  }
 }

@@ -1,5 +1,6 @@
 package com.task.manage.task.service;
 
+import com.task.manage.config.KeycloakAuditorAware;
 import com.task.manage.document.domain.Document;
 import com.task.manage.document.domain.DocumentRepository;
 import com.task.manage.donor.domain.Donor;
@@ -11,6 +12,8 @@ import com.task.manage.partner.exception.PartnerNotFoundException;
 import com.task.manage.task.domain.Task;
 import com.task.manage.task.domain.Task.TaskStatus;
 import com.task.manage.task.domain.TaskRepository;
+import com.task.manage.task.domain.TaskStatusHistory;
+import com.task.manage.task.domain.TaskStatusHistoryRepository;
 import com.task.manage.task.dto.TaskRequestDto;
 import com.task.manage.task.dto.TaskResponseDto;
 import com.task.manage.task.exception.InvalidStatusException;
@@ -19,6 +22,7 @@ import com.task.manage.task.exception.TaskNotFoundException;
 import com.task.manage.task.mapper.TaskMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -39,6 +43,8 @@ public class TaskServiceImpl implements TaskService {
     private final DonorRepository donorRepository;
     private final DocumentRepository documentRepository;
     private final TaskMapper taskMapper;
+    private final TaskStatusHistoryRepository taskStatusHistoryRepository;
+    private final AuditorAware<String> auditorAware;
 
     @Override
     public TaskResponseDto createTask(TaskRequestDto requestDto) {
@@ -194,7 +200,11 @@ public class TaskServiceImpl implements TaskService {
         // Validate status transitions
         validateStatusTransition(task, taskStatus);
 
-        task.setTaskStatus(taskStatus);
+        // Get current user for audit trail
+        String currentUser = auditorAware.getCurrentAuditor().orElse("SYSTEM");
+
+        // Use the new changeStatus method which automatically tracks history
+        task.changeStatus(taskStatus, currentUser, "Status updated via API");
 
         // Save task
         Task updatedTask = taskRepository.save(task);

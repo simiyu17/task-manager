@@ -1,0 +1,117 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-add-task-status-history
+      author: admin
+      changes:
+        # Create sequence for task_status_history
+        - createSequence:
+            sequenceName: task_status_history_seq
+            startValue: 1
+            incrementBy: 50
+
+        # Create task_status_history table
+        - createTable:
+            tableName: task_status_history
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: task_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: from_status
+                  type: VARCHAR(100)
+              - column:
+                  name: to_status
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_by
+                  type: VARCHAR(255)
+              - column:
+                  name: notes
+                  type: TEXT
+              - column:
+                  name: duration_in_previous_status_hours
+                  type: BIGINT
+              - column:
+                  name: date_created
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: last_modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: data_status
+                  type: VARCHAR(50)
+
+        # Add foreign key constraint
+        - addForeignKeyConstraint:
+            baseTableName: task_status_history
+            baseColumnNames: task_id
+            constraintName: fk_task_status_history_task
+            referencedTableName: tasks
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+
+        # Create indexes for better query performance
+        - createIndex:
+            indexName: idx_task_status_history_task_id
+            tableName: task_status_history
+            columns:
+              - column:
+                  name: task_id
+
+        - createIndex:
+            indexName: idx_task_status_history_to_status
+            tableName: task_status_history
+            columns:
+              - column:
+                  name: to_status
+
+        - createIndex:
+            indexName: idx_task_status_history_changed_at
+            tableName: task_status_history
+            columns:
+              - column:
+                  name: changed_at
+
+        # Create a composite index for common queries
+        - createIndex:
+            indexName: idx_task_status_history_task_status
+            tableName: task_status_history
+            columns:
+              - column:
+                  name: task_id
+              - column:
+                  name: to_status
+              - column:
+                  name: changed_at
+
+      rollback:
+        - dropTable:
+            tableName: task_status_history
+        - dropSequence:
+            sequenceName: task_status_history_seq
+

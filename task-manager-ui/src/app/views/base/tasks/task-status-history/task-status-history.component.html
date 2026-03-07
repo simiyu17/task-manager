@@ -1,0 +1,14 @@
+@if (history.length === 0) {
+  <div class="alert alert-info mb-0">No status history available.</div>
+} @else {
+  <div class="status-history-list">
+    @for (entry of history; track entry.id) {
+      <div class="status-history-item">
+        <div class="status-history-date">{{ entry.changedAt | date:'dd MMM, yyyy HH:mm' }}</div>
+        <div class="status-history-text">
+          Task Status Updated from {{ entry.fromStatusDisplay }} to {{ entry.toStatusDisplay }} by {{ entry.changedBy }}
+        </div>
+      </div>
+    }
+  </div>
+}

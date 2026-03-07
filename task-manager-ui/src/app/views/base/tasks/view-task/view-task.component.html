@@ -105,8 +105,34 @@
 
         <!-- Comments Section -->
         <div class="section">
-          <h5 class="section-title mb-3">Comments</h5>
-          <app-task-comments [taskId]="taskId" [taskStatus]="task.taskStatus"></app-task-comments>
+          <div class="task-activity-toggle mb-3" role="tablist" aria-label="Task activity tabs">
+            <button
+              type="button"
+              cButton
+              size="sm"
+              [color]="selectedTaskActivityTab === 'comments' ? 'primary' : 'secondary'"
+              [variant]="selectedTaskActivityTab === 'comments' ? undefined : 'outline'"
+              (click)="setTaskActivityTab('comments')"
+            >
+              Comments
+            </button>
+            <button
+              type="button"
+              cButton
+              size="sm"
+              [color]="selectedTaskActivityTab === 'history' ? 'primary' : 'secondary'"
+              [variant]="selectedTaskActivityTab === 'history' ? undefined : 'outline'"
+              (click)="setTaskActivityTab('history')"
+            >
+              History
+            </button>
+          </div>
+
+          @if (selectedTaskActivityTab === 'comments') {
+            <app-task-comments [taskId]="taskId" [taskStatus]="task.taskStatus"></app-task-comments>
+          } @else {
+            <app-task-status-history [history]="task.statusHistory"></app-task-status-history>
+          }
         </div>
       </c-col>
 

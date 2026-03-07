@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public enum DataStatus {
-    PENDING_APPROVAL,
+    ACTIVE,
     APPROVED,
     REJECTED,
     DELETED;

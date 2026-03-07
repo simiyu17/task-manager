@@ -9,6 +9,20 @@ export interface TaskStatusOption {
   statusDisplayName: string;
 }
 
+export interface TaskStatusHistoryEntry {
+  id: number;
+  taskId: number;
+  taskTitle: string;
+  fromStatus: string;
+  fromStatusDisplay: string;
+  toStatus: string;
+  toStatusDisplay: string;
+  changedAt: string;
+  changedBy: string;
+  notes?: string;
+  durationInPreviousStatusHours?: number;
+}
+
 export interface TaskResponse {
   id: number;
   title: string;
@@ -32,6 +46,7 @@ export interface TaskResponse {
   priority?: string;
   stepValue: number;
   possibleNextStatuses: TaskStatusOption[];
+  statusHistory: TaskStatusHistoryEntry[];
 }
 
 export interface PartnerResponseDto {
