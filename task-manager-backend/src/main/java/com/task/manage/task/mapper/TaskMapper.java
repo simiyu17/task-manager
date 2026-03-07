@@ -15,7 +15,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(
         componentModel = "spring",
-        uses = {PartnerMapper.class, DonorMapper.class},
+        uses = {PartnerMapper.class, DonorMapper.class, TaskStatusHistoryMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface TaskMapper {
@@ -26,6 +26,7 @@ public interface TaskMapper {
     @Mapping(target = "taskStatusDisplayName", expression = "java(taskStatusToString(task.getTaskStatus()))")
     @Mapping(target = "stepValue", expression = "java(task.getTaskStatus() != null ? task.getTaskStatus().getStepValue() : null)")
     @Mapping(target = "possibleNextStatuses", expression = "java(task.getTaskPossibleNextStatuses())")
+    @Mapping(target = "statusHistory", source = "statusHistory")
     TaskResponseDto toResponseDto(Task task);
 
     @Mapping(target = "donor", ignore = true)

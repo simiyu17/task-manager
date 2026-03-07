@@ -28,6 +28,7 @@ public record TaskResponseDto(
         String createdBy,
         String lastModifiedBy,
         Integer stepValue,
-        List<TaskStatusDto> possibleNextStatuses
+        List<TaskStatusDto> possibleNextStatuses,
+        List<TaskStatusHistoryResponseDto> statusHistory
 ) {
 }

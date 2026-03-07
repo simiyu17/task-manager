@@ -1,0 +1,241 @@
+```
+TASK STATUS HISTORY TRACKING - ARCHITECTURE DIAGRAM
+====================================================
+
+┌─────────────────────────────────────────────────────────────────┐
+│                         FRONTEND LAYER                          │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
+│  │   Kanban     │  │   Timeline   │  │   Charts &   │          │
+│  │   Board      │  │   Viewer     │  │  Analytics   │          │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘          │
+└─────────┼──────────────────┼──────────────────┼─────────────────┘
+          │                  │                  │
+          │ HTTP REST        │                  │
+          ▼                  ▼                  ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      REST API LAYER                             │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  TaskStatusHistoryController                             │   │
+│  │  /api/v1/tasks/{id}/status-history/*                     │   │
+│  │                                                           │   │
+│  │  Endpoints:                                               │   │
+│  │  • GET    /                    → Get all history         │   │
+│  │  • GET    /status/{s}/first    → First occurrence        │   │
+│  │  • GET    /date-range          → Date filtered           │   │
+│  │  • GET    /status/{s}          → By status               │   │
+│  │  • GET    /latest              → Most recent             │   │
+│  │  • GET    /status/{s}/duration → Total time              │   │
+│  └──────────────────────┬───────────────────────────────────┘   │
+│                         │                                       │
+│  ┌──────────────────────┴───────────────────────────────────┐   │
+│  │  TaskController                                          │   │
+│  │  • PATCH /api/v1/tasks/{id}/status                       │   │
+│  │    (Automatically triggers history tracking)             │   │
+│  └──────────────────────┬───────────────────────────────────┘   │
+└─────────────────────────┼─────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      SERVICE LAYER                              │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  TaskStatusHistoryService                                │   │
+│  │  • getTaskStatusHistory()                                │   │
+│  │  • getDateWhenTaskReachedStatus()                        │   │
+│  │  • getTotalDurationInStatus()                            │   │
+│  │  • getTaskHistoryBetweenDates()                          │   │
+│  │  • getTaskHistoryByStatus()                              │   │
+│  │  • getLatestStatusChange()                               │   │
+│  └──────────────────────┬───────────────────────────────────┘   │
+│                         │                                       │
+│  ┌──────────────────────┴───────────────────────────────────┐   │
+│  │  TaskServiceImpl                                         │   │
+│  │  • updateTaskStatus() → calls task.changeStatus()        │   │
+│  └──────────────────────┬───────────────────────────────────┘   │
+└─────────────────────────┼─────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      DOMAIN LAYER                               │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Task Entity                                             │   │
+│  │  ┌────────────────────────────────────────────────────┐  │   │
+│  │  │  changeStatus(newStatus, changedBy, notes)         │  │   │
+│  │  │  1. Creates TaskStatusHistory object               │  │   │
+│  │  │  2. Calculates duration in previous status         │  │   │
+│  │  │  3. Adds to statusHistory collection               │  │   │
+│  │  │  4. Updates taskStatus field                       │  │   │
+│  │  └────────────────────────────────────────────────────┘  │   │
+│  │                         │                                 │   │
+│  │  @OneToMany             │ CASCADE                         │   │
+│  │                         ▼                                 │   │
+│  │  ┌────────────────────────────────────────────────────┐  │   │
+│  │  │  TaskStatusHistory Entity                          │  │   │
+│  │  │  • task_id (FK)                                    │  │   │
+│  │  │  • from_status                                     │  │   │
+│  │  │  • to_status                                       │  │   │
+│  │  │  • changed_at                                      │  │   │
+│  │  │  • changed_by                                      │  │   │
+│  │  │  • notes                                           │  │   │
+│  │  │  • duration_in_previous_status_hours               │  │   │
+│  │  └────────────────────────────────────────────────────┘  │   │
+│  └──────────────────────┬───────────────────────────────────┘   │
+└─────────────────────────┼─────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                   REPOSITORY LAYER                              │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  TaskStatusHistoryRepository                             │   │
+│  │  • findByTaskIdOrderByChangedAtDesc()                    │   │
+│  │  • findFirstByTaskIdAndStatus()                          │   │
+│  │  • findByTaskIdAndStatus()                               │   │
+│  │  • findTaskHistoryBetweenDates()                         │   │
+│  │  • findFirstByTaskIdOrderByChangedAtDesc()               │   │
+│  │  • findByTaskIdsOrderByChangedAtDesc()                   │   │
+│  │  • countByTaskId()                                       │   │
+│  └──────────────────────┬───────────────────────────────────┘   │
+└─────────────────────────┼─────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     DATABASE LAYER                              │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  PostgreSQL Database                                     │   │
+│  │                                                           │   │
+│  │  ┌────────────┐           ┌──────────────────────────┐   │   │
+│  │  │   tasks    │◄─────────┤ task_status_history      │   │   │
+│  │  │            │ 1:N       │                          │   │   │
+│  │  │ • id (PK)  │           │ • id (PK)                │   │   │
+│  │  │ • title    │           │ • task_id (FK) ──────────┤   │   │
+│  │  │ • status   │           │ • from_status            │   │   │
+│  │  │ • ...      │           │ • to_status              │   │   │
+│  │  └────────────┘           │ • changed_at             │   │   │
+│  │                           │ • changed_by             │   │   │
+│  │                           │ • notes                  │   │   │
+│  │                           │ • duration...            │   │   │
+│  │                           └──────────────────────────┘   │   │
+│  │                                                           │   │
+│  │  Indexes:                                                 │   │
+│  │  • idx_task_status_history_task_id                       │   │
+│  │  • idx_task_status_history_to_status                     │   │
+│  │  • idx_task_status_history_changed_at                    │   │
+│  │  • idx_task_status_history_task_status (composite)       │   │
+│  └──────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                   CROSS-CUTTING CONCERNS                        │
+│                                                                 │
+│  ┌─────────────────────┐  ┌──────────────────────────────┐     │
+│  │ KeycloakAuditorAware│  │  Liquibase Migrations        │     │
+│  │ • Gets current user │  │  • 002-add-table.yaml        │     │
+│  │ • From JWT token    │  │  • 003-populate-data.yaml    │     │
+│  └─────────────────────┘  └──────────────────────────────┘     │
+│                                                                 │
+│  ┌─────────────────────┐  ┌──────────────────────────────┐     │
+│  │  MapStruct Mapping  │  │  Lombok Code Generation      │     │
+│  │  • Entity → DTO     │  │  • Getters/Setters          │     │
+│  │  • Auto-generated   │  │  • Constructors             │     │
+│  └─────────────────────┘  └──────────────────────────────┘     │
+└─────────────────────────────────────────────────────────────────┘
+
+
+DATA FLOW: Status Update
+========================
+
+User Action (Frontend)
+    │
+    ▼
+PATCH /api/v1/tasks/1/status {"status": "ALLOCATED"}
+    │
+    ▼
+TaskController.updateTaskStatus()
+    │
+    ▼
+TaskServiceImpl.updateTaskStatus()
+    │
+    ├─► 1. Validate status transition
+    ├─► 2. Get current user (KeycloakAuditorAware)
+    └─► 3. Call task.changeStatus(newStatus, user, notes)
+            │
+            ▼
+        Task.changeStatus() method
+            │
+            ├─► Create TaskStatusHistory object
+            │   • from_status = current status
+            │   • to_status = new status
+            │   • changed_at = now
+            │   • changed_by = current user
+            │   • notes = provided notes
+            │
+            ├─► Calculate duration in previous status
+            │   • Get last change time (from history or creation)
+            │   • Calculate hours between timestamps
+            │   • Store in duration_in_previous_status_hours
+            │
+            ├─► Add to statusHistory collection
+            │
+            └─► Update taskStatus field
+                    │
+                    ▼
+                taskRepository.save(task)
+                    │
+                    ▼
+                JPA CASCADE persists TaskStatusHistory
+                    │
+                    ▼
+                Database INSERT into task_status_history
+                    │
+                    ▼
+                Return updated Task to frontend
+
+
+DATA FLOW: Query History
+========================
+
+User Action (Frontend)
+    │
+    ▼
+GET /api/v1/tasks/1/status-history
+    │
+    ▼
+TaskStatusHistoryController.getTaskStatusHistory()
+    │
+    ▼
+TaskStatusHistoryService.getTaskStatusHistory()
+    │
+    ▼
+TaskStatusHistoryRepository.findByTaskIdOrderByChangedAtDesc()
+    │
+    ▼
+Database: SELECT * FROM task_status_history
+          WHERE task_id = 1
+          ORDER BY changed_at DESC
+    │
+    ▼
+TaskStatusHistoryMapper.toResponseDto()
+    │
+    ▼
+Return JSON array to frontend
+
+
+BENEFIT FLOW
+============
+
+Status Changes Tracked
+    ↓
+Historical Data Accumulated
+    ↓
+Analytics Queries Run
+    ↓
+Insights Discovered
+    ↓
+Process Improvements Made
+    ↓
+Efficiency Increased
+    ↓
+Delivery Time Reduced
+    ↓
+Stakeholder Satisfaction ↑
+```
+
