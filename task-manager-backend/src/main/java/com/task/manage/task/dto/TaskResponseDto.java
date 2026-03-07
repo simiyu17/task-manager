@@ -15,6 +15,7 @@ public record TaskResponseDto(
         String description,
         PartnerResponseDto assignedPartner,
         String taskStatus,
+        String taskStatusDisplayName,
         BigDecimal validatedBudget,
         LocalDateTime requestReceivedAt,
         LocalDateTime acceptedAt,

@@ -56,7 +56,7 @@
                   </td>
                   <td>
                     <span class="badge" [ngClass]="'bg-' + getStatusColor(task.taskStatus)">
-                      {{ task.taskStatus }}
+                      {{ task.taskStatusDisplayName }}
                     </span>
                   </td>
                   <td>{{ task.deadline ? formatDate(task.deadline) : 'No deadline' }}</td>

@@ -1,0 +1,492 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-initial-tasks-database
+      author: admin
+      changes:
+        # Create sequences for all tables
+        - createSequence:
+            sequenceName: partners_seq
+            startValue: 1
+            incrementBy: 50
+
+        - createSequence:
+            sequenceName: donors_seq
+            startValue: 1
+            incrementBy: 50
+
+        - createSequence:
+            sequenceName: tasks_seq
+            startValue: 1
+            incrementBy: 50
+
+        - createSequence:
+            sequenceName: documents_seq
+            startValue: 1
+            incrementBy: 50
+
+        - createSequence:
+            sequenceName: task_reviews_seq
+            startValue: 1
+            incrementBy: 50
+
+        - createSequence:
+            sequenceName: review_comments_seq
+            startValue: 1
+            incrementBy: 50
+
+        - createSequence:
+            sequenceName: clarifying_questions_seq
+            startValue: 1
+            incrementBy: 50
+
+        # Create partners table
+        - createTable:
+            tableName: partners
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: partner_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_created
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: last_modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: data_status
+                  type: VARCHAR(50)
+
+        - addUniqueConstraint:
+            tableName: partners
+            columnNames: partner_name
+            constraintName: NAME_UNIQUE
+
+        # Create donors table
+        - createTable:
+            tableName: donors
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: donor_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email_address
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: contact_number
+                  type: VARCHAR(255)
+              - column:
+                  name: date_created
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: last_modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: data_status
+                  type: VARCHAR(50)
+
+        - addUniqueConstraint:
+            tableName: donors
+            columnNames: donor_name
+            constraintName: DONOR_NAME_UNIQUE
+
+        - addUniqueConstraint:
+            tableName: donors
+            columnNames: email_address
+            constraintName: DONOR_EMAIL_UNIQUE
+
+        # Create tasks table
+        - createTable:
+            tableName: tasks
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: donor_id
+                  type: BIGINT
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: assigned_partner_id
+                  type: BIGINT
+              - column:
+                  name: task_status
+                  type: VARCHAR(50)
+              - column:
+                  name: validated_budget
+                  type: DECIMAL(19,2)
+              - column:
+                  name: request_received_at
+                  type: TIMESTAMP
+              - column:
+                  name: accepted_at
+                  type: TIMESTAMP
+              - column:
+                  name: deadline
+                  type: TIMESTAMP
+              - column:
+                  name: allocate_notes
+                  type: TEXT
+              - column:
+                  name: acceptance_notes
+                  type: TEXT
+              - column:
+                  name: rejection_notes
+                  type: TEXT
+              - column:
+                  name: date_created
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: last_modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: data_status
+                  type: VARCHAR(50)
+
+        - addForeignKeyConstraint:
+            baseTableName: tasks
+            baseColumnNames: donor_id
+            constraintName: fk_tasks_donor
+            referencedTableName: donors
+            referencedColumnNames: id
+            onDelete: RESTRICT
+            onUpdate: CASCADE
+
+        - addForeignKeyConstraint:
+            baseTableName: tasks
+            baseColumnNames: assigned_partner_id
+            constraintName: fk_tasks_partner
+            referencedTableName: partners
+            referencedColumnNames: id
+            onDelete: SET NULL
+            onUpdate: CASCADE
+
+        - addUniqueConstraint:
+            tableName: tasks
+            columnNames: title
+            constraintName: TITLE_UNIQUE
+
+        # Create documents table
+        - createTable:
+            tableName: documents
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: task_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: document_type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_path
+                  type: VARCHAR(500)
+              - column:
+                  name: file_location
+                  type: VARCHAR(500)
+              - column:
+                  name: is_final
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: uploaded_by
+                  type: VARCHAR(255)
+              - column:
+                  name: uploaded_at
+                  type: TIMESTAMP
+              - column:
+                  name: date_created
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: last_modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: data_status
+                  type: VARCHAR(50)
+
+        - addForeignKeyConstraint:
+            baseTableName: documents
+            baseColumnNames: task_id
+            constraintName: fk_documents_task
+            referencedTableName: tasks
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+
+        - addUniqueConstraint:
+            tableName: documents
+            columnNames: task_id, version, document_type
+            constraintName: UNIQUE_DOCUMENT
+
+        # Create task_reviews table
+        - createTable:
+            tableName: task_reviews
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: task_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: review_status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: review_cycle
+                  type: INTEGER
+              - column:
+                  name: reviewed_at
+                  type: TIMESTAMP
+              - column:
+                  name: overall_comment
+                  type: TEXT
+              - column:
+                  name: date_created
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: last_modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: data_status
+                  type: VARCHAR(50)
+
+        - addForeignKeyConstraint:
+            baseTableName: task_reviews
+            baseColumnNames: task_id
+            constraintName: fk_task_review_task
+            referencedTableName: tasks
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+
+        # Create review_comments table
+        - createTable:
+            tableName: review_comments
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: task_review_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: comment_text
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: section_reference
+                  type: VARCHAR(255)
+              - column:
+                  name: date_created
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: last_modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: data_status
+                  type: VARCHAR(50)
+
+        - addForeignKeyConstraint:
+            baseTableName: review_comments
+            baseColumnNames: task_review_id
+            constraintName: fk_review_comment_task_review
+            referencedTableName: task_reviews
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+
+        # Create clarifying_questions table
+        - createTable:
+            tableName: clarifying_questions
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: task_review_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: question_text
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: answer_text
+                  type: TEXT
+              - column:
+                  name: answered_by
+                  type: VARCHAR(255)
+              - column:
+                  name: is_answered
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: date_created
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: last_modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: data_status
+                  type: VARCHAR(50)
+
+        - addForeignKeyConstraint:
+            baseTableName: clarifying_questions
+            baseColumnNames: task_review_id
+            constraintName: fk_clarifying_question_task_review
+            referencedTableName: task_reviews
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+
+      rollback:
+        - dropTable:
+            tableName: clarifying_questions
+        - dropTable:
+            tableName: review_comments
+        - dropTable:
+            tableName: task_reviews
+        - dropTable:
+            tableName: documents
+        - dropTable:
+            tableName: tasks
+        - dropTable:
+            tableName: donors
+        - dropTable:
+            tableName: partners
+        - dropSequence:
+            sequenceName: clarifying_questions_seq
+        - dropSequence:
+            sequenceName: review_comments_seq
+        - dropSequence:
+            sequenceName: task_reviews_seq
+        - dropSequence:
+            sequenceName: documents_seq
+        - dropSequence:
+            sequenceName: tasks_seq
+        - dropSequence:
+            sequenceName: donors_seq
+        - dropSequence:
+            sequenceName: partners_seq
+
