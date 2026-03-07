@@ -1,25 +1,3 @@
 databaseChangeLog:
-  - include: 
-        file: db/changelog/changes/001-add-partners-table.yaml
   - include:
-        file: db/changelog/changes/002-add-task-table.yaml
-  - include:
-      file: db/changelog/changes/003-add-document-table.yaml
-  - include:
-      file: db/changelog/changes/004-add-task-reviews-table.yaml
-  - include:
-      file: db/changelog/changes/005-add-review-comments-table.yaml
-  - include:
-      file: db/changelog/changes/006-add-clarifying-questions-table.yaml
-  - include:
-      file: db/changelog/changes/007-add-donors-table.yaml
-  - include:
-      file: db/changelog/changes/008-replace-task-provider-name-with-donor-id.yaml
-  - include:
-      file: db/changelog/changes/009-remove-reviewer-fields-from-task-reviews.yaml
-  - include:
-      file: db/changelog/changes/010-add-missing-sequences-for-reviews-comments-questions.yaml
-  - include:
-      file: db/changelog/changes/011-remove-redundant-name-fields.yaml
-  - include:
-      file: db/changelog/changes/012-add-notes-columns-to-tasks.yaml
+      file: db/changelog/changes/001-initial-tasks-database.yaml

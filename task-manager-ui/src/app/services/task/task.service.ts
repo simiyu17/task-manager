@@ -16,6 +16,7 @@ export interface TaskResponse {
   description: string;
   assignedPartner?: PartnerResponseDto;
   taskStatus: string;
+  taskStatusDisplayName: string;
   validatedBudget?: number;
   requestReceivedAt?: string;
   acceptedAt?: string;
