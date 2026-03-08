@@ -23,7 +23,8 @@ export class ChartsComponent {
       {
         label: 'GitHub Commits',
         backgroundColor: '#f87979',
-        data: [40, 20, 12, 39, 17, 42, 79]
+        data: [40, 20, 12, 39, 17, 42, 79],
+        clip: 0
       }
     ]
   };
@@ -41,7 +42,8 @@ export class ChartsComponent {
         borderColor: 'rgba(220, 220, 220, 1)',
         pointBackgroundColor: 'rgba(220, 220, 220, 1)',
         pointBorderColor: '#fff',
-        data: [this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData]
+        data: [this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData],
+        clip: 0
       },
       {
         label: 'My Second dataset',
@@ -49,7 +51,8 @@ export class ChartsComponent {
         borderColor: 'rgba(151, 187, 205, 1)',
         pointBackgroundColor: 'rgba(151, 187, 205, 1)',
         pointBorderColor: '#fff',
-        data: [this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData]
+        data: [this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData],
+        clip: 0
       }
     ]
   };
@@ -63,7 +66,8 @@ export class ChartsComponent {
     datasets: [
       {
         backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-        data: [40, 20, 80, 10]
+        data: [40, 20, 80, 10],
+        clip: 0
       }
     ]
   };
@@ -81,7 +85,8 @@ export class ChartsComponent {
       {
         data: [300, 50, 100],
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+        clip: 0
       }
     ]
   };
@@ -98,7 +103,8 @@ export class ChartsComponent {
     datasets: [
       {
         data: [11, 16, 7, 3, 14],
-        backgroundColor: ['#FF6384', '#4BC0C0', '#FFCE56', '#E7E9ED', '#36A2EB']
+        backgroundColor: ['#FF6384', '#4BC0C0', '#FFCE56', '#E7E9ED', '#36A2EB'],
+        clip: 0
       }
     ]
   };
@@ -114,7 +120,8 @@ export class ChartsComponent {
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
         pointHoverBorderColor: 'rgba(179,181,198,1)',
-        data: [65, 59, 90, 81, 56, 55, 40]
+        data: [65, 59, 90, 81, 56, 55, 40],
+        clip: 0
       },
       {
         label: '2021',
@@ -124,7 +131,8 @@ export class ChartsComponent {
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
         pointHoverBorderColor: 'rgba(255,99,132,1)',
-        data: [this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData]
+        data: [this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData],
+        clip: 0
       }
     ]
   };

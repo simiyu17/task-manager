@@ -1,6 +1,6 @@
-import { Component, DestroyRef, DOCUMENT, effect, inject, OnInit, Renderer2, signal, WritableSignal } from '@angular/core';
+import { Component, DestroyRef, DOCUMENT, effect, inject, OnInit, Renderer2, signal, WritableSignal, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ChartOptions } from 'chart.js';
+import { ChartOptions, ChartData } from 'chart.js';
 import {
   ButtonDirective,
   ButtonGroupComponent,
@@ -86,6 +86,7 @@ export class DashboardComponent implements OnInit {
   readonly #dashboardService: DashboardService = inject(DashboardService);
   readonly #donorService: DonorService = inject(DonorService);
   readonly #partnerService: PartnerService = inject(PartnerService);
+  readonly #cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   // Dashboard data
   public kpiData?: DashboardKpiDto;
@@ -111,7 +112,15 @@ export class DashboardComponent implements OnInit {
   public isFilterLoading = false;
 
   public mainChart: IChartProps = { type: 'line' };
-  public statusChart: IChartProps = { type: 'doughnut' };
+  public statusChartData: ChartData | null = null;
+  public chartOptions = {
+    maintainAspectRatio: false,
+    datasets: {
+      doughnut: {
+        clip: 0
+      }
+    }
+  };
   public mainChartRef: WritableSignal<any> = signal(undefined);
   #mainChartRefEffect = effect(() => {
     if (this.mainChartRef()) {
@@ -192,8 +201,6 @@ export class DashboardComponent implements OnInit {
         this.stuckTasks = result.stuckTasks;
         this.partnerPerformance = result.partnerPerformance;
         
-        console.log('Partner Performance Data:', this.partnerPerformance);
-        
         // Update charts with real data
         this.buildStatusChart();
         this.buildCompletionTrendChart();
@@ -218,43 +225,22 @@ export class DashboardComponent implements OnInit {
    * Build status distribution donut chart
    */
   buildStatusChart(): void {
-    if (this.statusDistribution.length === 0) {
+    if (!this.statusDistribution || this.statusDistribution.length === 0) {
+      this.statusChartData = null;
       return;
     }
 
     const labels = this.statusDistribution.map(s => s.statusDisplay);
     const data = this.statusDistribution.map(s => s.taskCount);
-    const colors = this.getStatusColors();
+    const colors = this.getStatusColors().slice(0, data.length);
 
-    this.statusChart = {
-      type: 'doughnut',
-      data: {
-        labels: labels,
-        datasets: [{
-          data: data,
-          backgroundColor: colors,
-          hoverBackgroundColor: colors
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: true,
-            position: 'bottom'
-          },
-          tooltip: {
-            callbacks: {
-              label: (context: any) => {
-                const index = context.dataIndex;
-                const distribution = this.statusDistribution[index];
-                return `${distribution.statusDisplay}: ${distribution.taskCount} (${distribution.percentage.toFixed(1)}%)`;
-              }
-            }
-          }
-        }
-      }
+    this.statusChartData = {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: colors,
+        clip: 0
+      }]
     };
   }
 
@@ -283,6 +269,7 @@ export class DashboardComponent implements OnInit {
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 2,
             fill: true,
+            clip: 0,
             yAxisID: 'y'
           },
           {
@@ -292,6 +279,7 @@ export class DashboardComponent implements OnInit {
             borderColor: 'rgba(255, 159, 64, 1)',
             borderWidth: 2,
             fill: false,
+            clip: 0,
             yAxisID: 'y1'
           }
         ]
@@ -366,6 +354,13 @@ export class DashboardComponent implements OnInit {
       case 'MEDIUM': return 'info';
       default: return 'secondary';
     }
+  }
+
+  /**
+   * Check if status chart has data to display
+   */
+  hasStatusChartData(): boolean {
+    return !!(this.statusChartData && this.statusChartData.datasets?.[0]?.data && this.statusChartData.datasets[0].data.length > 0);
   }
 
   /**
