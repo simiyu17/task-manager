@@ -17,7 +17,12 @@ export const AuthGuard: CanActivateFn = (
 
     // 1. Check if user is authenticated
   if (!keycloak.authenticated) {
-    keycloak.login({ redirectUri: window.location.origin + state.url });
+    // Use current location for better Firefox compatibility
+    const redirectUri = window.location.href;
+    keycloak.login({ 
+      redirectUri: redirectUri,
+      prompt: 'login' // Force fresh login for better cross-browser compatibility
+    });
     return false;
   }
 

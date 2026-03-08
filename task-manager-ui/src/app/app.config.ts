@@ -4,7 +4,6 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
-  withHashLocation,
   withInMemoryScrolling,
   withRouterConfig,
   withViewTransitions
@@ -36,8 +35,7 @@ export const appConfig: ApplicationConfig = {
         anchorScrolling: 'enabled'
       }),
       withEnabledBlockingInitialNavigation(),
-      withViewTransitions(),
-      withHashLocation(),
+      withViewTransitions()
     ),
     IconSetService,
     provideAnimationsAsync(),
@@ -50,7 +48,11 @@ export const appConfig: ApplicationConfig = {
       },
       initOptions: {
         onLoad: 'check-sso', // Checks if user is logged in without redirecting immediately
-        silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html'
+        checkLoginIframe: false, // Disable iframe check for Firefox compatibility
+        pkceMethod: 'S256', // Use PKCE for better security and browser compatibility
+        flow: 'standard', // Explicit OAuth2 standard flow for compatibility
+        responseMode: 'query', // Use query mode for path location routing
+        enableLogging: environment.production ? false : true // Enable logging in dev for debugging
       },
       // Modern feature: Auto refresh token based on user activity
       features: [
