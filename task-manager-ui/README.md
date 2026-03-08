@@ -149,6 +149,56 @@ The documentation for the CoreUI Admin Template is hosted at our website [CoreUI
 
 ---
 
+## Docker Deployment
+
+This application can be deployed using Docker with external PostgreSQL and Traefik reverse proxy handling SSL termination.
+
+### Quick Start
+
+1. **Initialize PostgreSQL databases**:
+   ```bash
+   sudo ./init-postgres.sh
+   ```
+
+2. **Configure environment**:
+   ```bash
+   cp .env.example .env
+   nano .env  # Update with your DOMAIN, ACME_EMAIL, and passwords
+   ```
+
+3. **Start all services**:
+   ```bash
+   docker-compose up -d
+   ```
+
+That's it! Traefik automatically handles SSL certificates via Let's Encrypt.
+
+### Deployment Guides
+
+- **Quick Start**: [QUICKSTART.md](QUICKSTART.md) - 5-step deployment guide
+- **Traefik Details**: [TRAEFIK_SETUP.md](TRAEFIK_SETUP.md) - Complete Traefik configuration
+- **Alternative Nginx**: [EXTERNAL_DB_SETUP.md](EXTERNAL_DB_SETUP.md) - Manual Nginx setup if preferred
+- **Keycloak Config**: [KEYCLOAK_SETUP.md](KEYCLOAK_SETUP.md) - Authentication setup
+- **Environments**: [ENVIRONMENT.md](ENVIRONMENT.md) - Environment configurations
+- **Runtime Config**: [RUNTIME_CONFIG.md](RUNTIME_CONFIG.md) - Docker runtime configuration system
+
+### Architecture
+
+- **Frontend**: Angular 21 app (Nginx container)
+- **Backend**: Spring Boot 3.5.10 API (port 8082, context: /task-manager)
+- **Auth**: Keycloak 26.0.5
+- **Database**: External PostgreSQL (host)
+- **Reverse Proxy**: Traefik with automatic Let's Encrypt SSL
+
+All traffic flows through Traefik with automatic HTTPS!
+
+**Access URLs:**
+- Frontend: https://your-domain.com
+- API: https://your-domain.com/task-manager/api/v1/
+- Keycloak: https://your-domain.com/auth/
+
+---
+
 ## Versioning
 
 For transparency into our release cycle and in striving to maintain backward compatibility, CoreUI Free Admin Template is maintained

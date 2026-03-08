@@ -2,7 +2,10 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-export const environment = {
+import { getEnvironmentConfig } from '../app/config/environment.config';
+
+// Compile-time environment (development)
+const compileTimeEnvironment = {
   production: false,
   apiBaseUrl: 'http://localhost:8082/task-manager/api/v1',
   authBaseUrl: 'http://localhost:8080',
@@ -10,6 +13,9 @@ export const environment = {
   authClientId: 'task-manager-ui-client',
   apiTimeout: 30000
 };
+
+// Export environment with runtime override support
+export const environment = getEnvironmentConfig(compileTimeEnvironment);
 
 /*
  * For easier debugging in development mode, you can import the following file
