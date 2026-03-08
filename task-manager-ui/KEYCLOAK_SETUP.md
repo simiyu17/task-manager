@@ -91,6 +91,23 @@ For better Firefox compatibility, you may want to adjust:
 
 ## Troubleshooting
 
+### Issue: "DOMException: The operation was aborted"
+**Cause**: Router trying to navigate before Keycloak initialization completes.
+
+**Solution**:
+- The app now uses non-blocking router initialization
+- AuthGuard waits up to 5 seconds for Keycloak to initialize
+- Ensure Keycloak server is accessible at the configured URL
+- Check browser console for detailed Keycloak logs (dev mode)
+
+**Testing**:
+```bash
+# Verify Keycloak is accessible
+curl http://localhost:8080/realms/task-manager/.well-known/openid-configuration
+
+# Expected: JSON response with Keycloak configuration
+```
+
 ### Issue: Redirect loop in Firefox
 **Solution**: 
 - Verify `checkLoginIframe: false` in app.config.ts

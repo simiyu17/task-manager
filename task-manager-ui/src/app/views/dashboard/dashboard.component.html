@@ -283,17 +283,20 @@
     <c-card class="mb-4">
       <c-card-body>
         <h4 class="card-title mb-3">Status Distribution</h4>
-        <c-chart
-          *ngIf="statusChart.data"
-          [data]="statusChart.data"
-          [height]="300"
-          [options]="statusChart.options"
-          [type]="statusChart.type">
-        </c-chart>
-        <div *ngIf="!statusChart.data && isLoading" class="text-center py-5">
+        <div *ngIf="isLoading" class="text-center py-5">
           <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>
           </div>
+        </div>
+        <div *ngIf="!isLoading && statusChartData" style="height: 300px;">
+          <c-chart
+            type="doughnut"
+            [data]="statusChartData"
+            [options]="chartOptions">
+          </c-chart>
+        </div>
+        <div *ngIf="!isLoading && !statusChartData" class="text-center py-5 text-muted">
+          <p>No status distribution data available</p>
         </div>
       </c-card-body>
     </c-card>

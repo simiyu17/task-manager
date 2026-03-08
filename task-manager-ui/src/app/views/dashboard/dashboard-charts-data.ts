@@ -106,16 +106,19 @@ export class DashboardChartsData {
       {
         data: this.mainChart['Data1'],
         label: 'Current',
+        clip: 0,
         ...colors[0]
       },
       {
         data: this.mainChart['Data2'],
         label: 'Previous',
+        clip: 0,
         ...colors[1]
       },
       {
         data: this.mainChart['Data3'],
         label: 'BEP',
+        clip: 0,
         ...colors[2]
       }
     ];
