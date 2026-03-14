@@ -1,8 +1,6 @@
 version: '3.8'
-
 # Task Manager Application Stack
 # External PostgreSQL on host (use init-postgres.sh to setup)
-
 services:
   # Keycloak 26.0.5 Authentication Service
   keycloak:
@@ -37,7 +35,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
-
   # Spring Boot 3.5.10 Backend API
   task-manager-api:
     build:
@@ -78,7 +75,6 @@ services:
       start_period: 40s
     volumes:
       - ./task-manager-uploads:${FILE_UPLOAD_DIR:-./uploads}
-
   # Angular 21 Frontend
   task-manager-ui:
     build:
@@ -109,7 +105,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-
 networks:
   task-manager-network:
     driver: bridge
