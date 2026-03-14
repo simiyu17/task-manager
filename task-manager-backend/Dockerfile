@@ -1,7 +1,7 @@
 # Multi-stage Dockerfile for Spring Boot Application (Java 25)
 
 # Stage 1: Build the application
-FROM gradle:8.11-jdk25-alpine AS build
+FROM gradle:9.4.0-jdk25-alpine AS build
 
 WORKDIR /app
 
