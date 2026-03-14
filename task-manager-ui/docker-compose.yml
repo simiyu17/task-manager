@@ -1,62 +1,18 @@
 version: '3.8'
 
 # Task Manager Application Stack
-# Uses Traefik v2 for automatic SSL with Let's Encrypt
 # External PostgreSQL on host (use init-postgres.sh to setup)
 
 services:
-  # Traefik Reverse Proxy with Automatic SSL
-  traefik:
-    image: traefik:v2.11
-    container_name: traefik
-    command:
-      # API and Dashboard
-      - "--api.dashboard=true"
-      - "--api.insecure=false"
-      # Docker provider
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      # Entrypoints
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      # HTTP to HTTPS redirect
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-      # Let's Encrypt
-      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
-      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
-      # Logging
-      - "--log.level=INFO"
-      - "--accesslog=true"
-    ports:
-      - "80:80"
-      - "443:443"
-      # Dashboard (optional, comment out in production or use auth)
-      - "8081:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik-certificates:/letsencrypt
-    networks:
-      - task-manager-network
-    restart: unless-stopped
-    labels:
-      # Dashboard access (optional)
-      - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN}`)"
-      - "traefik.http.routers.traefik.entrypoints=websecure"
-      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.traefik.service=api@internal"
-      # Basic auth for dashboard (generate with: htpasswd -nb admin password)
-      # Default: admin/admin (change in production!)
-      - "traefik.http.middlewares.traefik-auth.basicauth.users=admin:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/"
-
   # Keycloak 26.0.5 Authentication Service
   keycloak:
-    image: quay.io/keycloak/keycloak:26.0.5
+    image: quay.io/keycloak/keycloak:26.5.2
     container_name: keycloak
-    command:
-      - start-dev
+    # Use 'start' for production; 'start-dev' ignores some proxy settings
+    command: 
+      - start 
+      - --optimized 
+      - --http-relative-path=/auth
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://host.docker.internal:5432/keycloak
@@ -66,8 +22,10 @@ services:
       KC_HOSTNAME_STRICT: false
       KC_HTTP_ENABLED: true
       KC_HEALTH_ENABLED: true
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      # Critical for Nginx to pass SSL info correctly
+      KC_PROXY_HEADERS: xforwarded
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -79,26 +37,16 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
-    labels:
-      - "traefik.enable=true"
-      # Keycloak at /auth path
-      - "traefik.http.routers.keycloak.rule=Host(`${DOMAIN}`) && PathPrefix(`/auth`)"
-      - "traefik.http.routers.keycloak.entrypoints=websecure"
-      - "traefik.http.routers.keycloak.tls.certresolver=letsencrypt"
-      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
 
   # Spring Boot 3.5.10 Backend API
   task-manager-api:
     build:
-      context: ../task-manager-api
+      context: https://github.com/simiyu17/task-manager.git#main:task-manager-backend
       dockerfile: Dockerfile
+      args:
+        GITHUB_TOKEN: ${GITHUB_TOKEN}
     container_name: task-manager-api
     environment:
-      # Spring Configuration
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
-      SERVER_PORT: ${SERVER_PORT:-8082}
-      SERVER_CONTEXT_PATH: ${SERVER_CONTEXT_PATH:-/task-manager}
-      
       # PostgreSQL Database Configuration
       POSTGRESQL_HOST: host.docker.internal
       POSTGRESQL_PORT: ${POSTGRESQL_PORT:-5432}
@@ -106,15 +54,9 @@ services:
       POSTGRESQL_USER: ${POSTGRESQL_USER:-taskmanager}
       POSTGRESQL_PASSWORD: ${POSTGRESQL_PASSWORD:-taskmanager_password}
       
-      # HikariCP Connection Pool
-      DB_HIKARI_MAX_POOL_SIZE: ${DB_HIKARI_MAX_POOL_SIZE:-20}
-      DB_HIKARI_MIN_IDLE: ${DB_HIKARI_MIN_IDLE:-10}
-      DB_HIKARI_CONNECTION_TIMEOUT: ${DB_HIKARI_CONNECTION_TIMEOUT:-60000}
-      DB_HIKARI_IDLE_TIMEOUT: ${DB_HIKARI_IDLE_TIMEOUT:-600000}
-      DB_HIKARI_MAX_LIFETIME: ${DB_HIKARI_MAX_LIFETIME:-1800000}
-      
       # Keycloak Configuration
-      KEYCLOAK_AUTH_SERVER_URL: http://keycloak:8080
+      KEY_CLOAK_ISSUER_URI: ${KEY_CLOAK_ISSUER_URI}
+      KEYCLOAK_AUTH_SERVER_URL: ${KEY_CLOAK_ISSUER_URI}
       KEYCLOAK_REALM: ${KEYCLOAK_REALM:-task-manager}
       KEYCLOAK_RESOURCE: ${KEYCLOAK_RESOURCE_API:-task-manager-api-client}
       
@@ -134,31 +76,24 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    labels:
-      - "traefik.enable=true"
-      # API at /api path - route to Spring Boot context path
-      - "traefik.http.routers.api.rule=Host(`${DOMAIN}`) && PathPrefix(`/task-manager/api`)"
-      - "traefik.http.routers.api.entrypoints=websecure"
-      - "traefik.http.routers.api.tls.certresolver=letsencrypt"
-      - "traefik.http.services.api.loadbalancer.server.port=8082"
-      # CORS headers (if needed)
-      - "traefik.http.middlewares.api-cors.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS"
-      - "traefik.http.middlewares.api-cors.headers.accesscontrolalloworiginlist=https://${DOMAIN}"
-      - "traefik.http.middlewares.api-cors.headers.accesscontrolallowheaders=Authorization,Content-Type"
-      - "traefik.http.routers.api.middlewares=api-cors"
+    volumes:
+      - ./task-manager-uploads:${FILE_UPLOAD_DIR:-./uploads}
 
   # Angular 21 Frontend
   task-manager-ui:
     build:
-      context: .
+      context: https://github.com/simiyu17/task-manager.git#main:task-manager-ui
       dockerfile: Dockerfile
+      args:
+        GITHUB_TOKEN: ${GITHUB_TOKEN}
     container_name: task-manager-ui
+    ports:
+      - "3000:80"
     environment:
       # Angular Runtime Environment Variables
       # These are injected at container startup via env-config.js
-      ANGULAR_PRODUCTION: "false"
-      ANGULAR_API_BASE_URL: "https://${DOMAIN}/task-manager/api/v1"
-      ANGULAR_AUTH_BASE_URL: "https://${DOMAIN}/auth"
+      ANGULAR_API_BASE_URL: "https://${DOMAIN}/api/"
+      ANGULAR_AUTH_BASE_URL: "https://${DOMAIN}/auth/"
       ANGULAR_AUTH_REALM_NAME: "${KEYCLOAK_REALM:-task-manager}"
       ANGULAR_AUTH_CLIENT_ID: "${KEYCLOAK_RESOURCE_UI:-task-manager-ui-client}"
       ANGULAR_API_TIMEOUT: "30000"
@@ -174,26 +109,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-    labels:
-      - "traefik.enable=true"
-      # Frontend at root path
-      - "traefik.http.routers.frontend.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.frontend.entrypoints=websecure"
-      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.frontend.priority=1"
-      - "traefik.http.services.frontend.loadbalancer.server.port=80"
-      # Security headers
-      - "traefik.http.middlewares.security-headers.headers.stsSeconds=31536000"
-      - "traefik.http.middlewares.security-headers.headers.stsIncludeSubdomains=true"
-      - "traefik.http.middlewares.security-headers.headers.frameDeny=true"
-      - "traefik.http.middlewares.security-headers.headers.contentTypeNosniff=true"
-      - "traefik.http.middlewares.security-headers.headers.browserXssFilter=true"
-      - "traefik.http.routers.frontend.middlewares=security-headers"
 
 networks:
   task-manager-network:
     driver: bridge
-
-volumes:
-  traefik-certificates:
-    driver: local

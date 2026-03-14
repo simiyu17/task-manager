@@ -15,7 +15,7 @@ COPY settings.gradle .
 RUN chmod +x gradlew
 
 # Download dependencies (cached layer) - this improves build caching
-RUN ./gradlew dependencies --no-daemon || true
+RUN --mount=type=cache,target=/root/.gradle ./gradlew dependencies --no-daemon || true
 
 # Copy source code
 COPY src src
@@ -55,6 +55,7 @@ ENV JAVA_OPTS="-XX:+UseContainerSupport \
     -XX:+OptimizeStringConcat \
     -XX:+UseStringDeduplication \
     -XX:+ExitOnOutOfMemoryError \
+    -Dserver.forward-headers-strategy=framework \
     -Djava.security.egd=file:/dev/./urandom"
 
 # Run the application with optimized JVM settings
