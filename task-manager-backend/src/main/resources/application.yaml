@@ -41,7 +41,7 @@ spring:
       resourceserver:
         jwt:
           # The URL Keycloak realm
-          issuer-uri: http://localhost:8080/realms/task-manager
+          issuer-uri: ${KEY_CLOAK_ISSUER_URI:http://localhost:8080/realms/task-manager}
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
@@ -58,3 +58,9 @@ server:
 
 file:
   upload-dir: ${FILE_UPLOAD_DIR:./uploads}
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+
