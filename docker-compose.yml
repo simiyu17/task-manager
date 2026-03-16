@@ -7,12 +7,10 @@ services:
     container_name: keycloak
     # Use 'start' for production; 'start-dev' ignores some proxy settings
     command: 
-      - start 
-      - --optimized 
-      - --http-relative-path=/auth
+      - start-dev
     environment:
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://host.docker.internal:5432/keycloak
+      KC_DB_URL: jdbc:postgresql://host.docker.internal:5433/keycloak
       KC_DB_USERNAME: ${KC_DB_USERNAME:-keycloak}
       KC_DB_PASSWORD: ${KC_DB_PASSWORD:-keycloak_password}
       KC_HOSTNAME: ${DOMAIN}
@@ -29,11 +27,11 @@ services:
       - task-manager-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/health/ready || exit 1"]
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080"]
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 60s
+      start_period: 120s
     deploy:
       resources:
         limits:
@@ -61,7 +59,7 @@ services:
     environment:
       # PostgreSQL Database Configuration
       POSTGRESQL_HOST: host.docker.internal
-      POSTGRESQL_PORT: ${POSTGRESQL_PORT:-5432}
+      POSTGRESQL_PORT: ${POSTGRESQL_PORT:-5433}
       POSTGRESQL_DATABASE: ${POSTGRESQL_DATABASE:-taskmanager}
       POSTGRESQL_USER: ${POSTGRESQL_USER:-taskmanager}
       POSTGRESQL_PASSWORD: ${POSTGRESQL_PASSWORD:-taskmanager_password}
@@ -74,8 +72,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
-      keycloak:
-        condition: service_healthy
+      - keycloak
     networks:
       - task-manager-network
     restart: unless-stopped
@@ -122,8 +119,7 @@ services:
       ANGULAR_AUTH_CLIENT_ID: "${KEYCLOAK_RESOURCE_UI:-task-manager-ui-client}"
       ANGULAR_API_TIMEOUT: "30000"
     depends_on:
-      task-manager-api:
-        condition: service_healthy
+      - task-manager-api
     networks:
       - task-manager-network
     restart: unless-stopped
