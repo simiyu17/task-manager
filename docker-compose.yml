@@ -71,9 +71,6 @@ services:
       KEYCLOAK_AUTH_SERVER_URL: ${KEY_CLOAK_ISSUER_URI}
       KEYCLOAK_REALM: ${KEYCLOAK_REALM:-task-manager}
       KEYCLOAK_RESOURCE: ${KEYCLOAK_RESOURCE_API:-task-manager-api-client}
-      
-      # File Upload Configuration
-      FILE_UPLOAD_DIR: ${FILE_UPLOAD_DIR:-./uploads}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -89,7 +86,7 @@ services:
       retries: 3
       start_period: 40s
     volumes:
-      - ./task-manager-uploads:${FILE_UPLOAD_DIR:-./uploads}
+      - ./task-manager-uploads:/app/task-uploads
     deploy:
       resources:
         limits:

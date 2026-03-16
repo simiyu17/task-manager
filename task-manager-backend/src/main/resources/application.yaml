@@ -57,7 +57,7 @@ server:
     context-path: /task-manager
 
 file:
-  upload-dir: ${FILE_UPLOAD_DIR:./uploads}
+  upload-dir: ./task-uploads
 
 management:
   endpoints:

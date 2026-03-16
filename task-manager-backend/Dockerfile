@@ -30,7 +30,7 @@ WORKDIR /app
 
 # Install wget, create directories, setup user, and set permissions in one layer
 RUN apk add --no-cache wget && \
-    mkdir -p /app/uploads && \
+    mkdir -p /app/task-uploads && \
     addgroup -S spring && adduser -S spring -G spring
 
 # Copy the jar from build stage with explicit name
