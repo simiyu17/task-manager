@@ -2,7 +2,7 @@ import { getEnvironmentConfig } from '../app/config/environment.config';
 
 // Compile-time environment (Docker internal network)
 const compileTimeEnvironment = {
-  production: false,
+  production: true,
   apiBaseUrl: 'http://task-manager-api:8082/task-manager/api/v1',
   authBaseUrl: 'http://keycloak:8080',
   authRealmName: 'task-manager',

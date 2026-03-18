@@ -118,6 +118,7 @@ services:
       ANGULAR_AUTH_REALM_NAME: "${KEYCLOAK_REALM}"
       ANGULAR_AUTH_CLIENT_ID: "${KEYCLOAK_UI_CLIENT_ID}"
       ANGULAR_API_TIMEOUT: "30000"
+      ANGULAR_PRODUCTION: "true"
     depends_on:
       - task-manager-api
     networks:
