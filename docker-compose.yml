@@ -10,17 +10,17 @@ services:
       - start-dev
     environment:
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://host.docker.internal:5433/keycloak
-      KC_DB_USERNAME: ${KC_DB_USERNAME:-keycloak}
-      KC_DB_PASSWORD: ${KC_DB_PASSWORD:-keycloak_password}
+      KC_DB_URL: jdbc:postgresql://${KC_DB_HOST}:${KC_DB_PORT}/${KC_DB_NAME}
+      KC_DB_USERNAME: ${KC_DB_USERNAME}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
       KC_HOSTNAME: ${DOMAIN}
       KC_HOSTNAME_STRICT: false
       KC_HTTP_ENABLED: true
       KC_HEALTH_ENABLED: true
       # Critical for Nginx to pass SSL info correctly
       KC_PROXY_HEADERS: xforwarded
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -58,17 +58,17 @@ services:
     container_name: task-manager-api
     environment:
       # PostgreSQL Database Configuration
-      POSTGRESQL_HOST: host.docker.internal
-      POSTGRESQL_PORT: ${POSTGRESQL_PORT:-5433}
-      POSTGRESQL_DATABASE: ${POSTGRESQL_DATABASE:-taskmanager}
-      POSTGRESQL_USER: ${POSTGRESQL_USER:-taskmanager}
-      POSTGRESQL_PASSWORD: ${POSTGRESQL_PASSWORD:-taskmanager_password}
+      POSTGRESQL_HOST: ${POSTGRESQL_HOST}
+      POSTGRESQL_PORT: ${POSTGRESQL_PORT}
+      POSTGRESQL_DATABASE: ${POSTGRESQL_DATABASE}
+      POSTGRESQL_USER: ${POSTGRESQL_USER}
+      POSTGRESQL_PASSWORD: ${POSTGRESQL_PASSWORD}
       
       # Keycloak Configuration
       KEY_CLOAK_ISSUER_URI: ${KEY_CLOAK_ISSUER_URI}
-      KEYCLOAK_AUTH_SERVER_URL: ${KEY_CLOAK_ISSUER_URI}
-      KEYCLOAK_REALM: ${KEYCLOAK_REALM:-task-manager}
-      KEYCLOAK_RESOURCE: ${KEYCLOAK_RESOURCE_API:-task-manager-api-client}
+      KEYCLOAK_AUTH_SERVER_URL: ${KEYCLOAK_AUTH_SERVER_URL}
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM}
+      KEYCLOAK_API_CLIENT_ID: ${KEYCLOAK_API_CLIENT_ID}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -113,10 +113,10 @@ services:
     environment:
       # Angular Runtime Environment Variables
       # These are injected at container startup via env-config.js
-      ANGULAR_API_BASE_URL: "https://${DOMAIN}/api/"
-      ANGULAR_AUTH_BASE_URL: "https://${DOMAIN}/auth/"
-      ANGULAR_AUTH_REALM_NAME: "${KEYCLOAK_REALM:-task-manager}"
-      ANGULAR_AUTH_CLIENT_ID: "${KEYCLOAK_RESOURCE_UI:-task-manager-ui-client}"
+      ANGULAR_API_BASE_URL: "${ANGULAR_API_BASE_URL}"
+      ANGULAR_AUTH_BASE_URL: "${KEYCLOAK_AUTH_SERVER_URL}"
+      ANGULAR_AUTH_REALM_NAME: "${KEYCLOAK_REALM}"
+      ANGULAR_AUTH_CLIENT_ID: "${KEYCLOAK_UI_CLIENT_ID}"
       ANGULAR_API_TIMEOUT: "30000"
     depends_on:
       - task-manager-api

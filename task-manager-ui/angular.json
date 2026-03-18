@@ -34,8 +34,7 @@
             "preserveSymlinks": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets",
-              "src/env-config.js"
+              "src/assets"
             ],
             "styles": [
               "src/scss/styles.scss"
@@ -137,8 +136,7 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
-              "src/env-config.js"
+              "src/assets"
             ],
             "styles": [
               "src/scss/styles.scss"
